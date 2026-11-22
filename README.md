@@ -153,9 +153,7 @@ learning/     earlier exercises: LED blink, logic gates, counter, ripple-carry a
 
 **Tools:** [OSS CAD Suite](https://github.com/YosysHQ/oss-cad-suite-build)
 (yosys, nextpnr-himbaechel, gowin_pack, openFPGALoader, Icarus Verilog) and
-LLVM with lld for RISC-V (`brew install llvm lld` on macOS). On macOS, keep
-the toolchain out of iCloud-synced folders such as `~/Documents`: offloaded
-files make every tool start slow and Docker cannot read them.
+LLVM with lld for RISC-V (`brew install llvm lld` on macOS).
 
 ```bash
 git clone --recursive https://github.com/MilesEhrlich/rv32i-pipelined-cpu.git
