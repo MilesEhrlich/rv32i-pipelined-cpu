@@ -1,9 +1,7 @@
 *.json
 *.fs
 *.vcd
-sim
-sim_c
+build/
 sw/build/
 tests/build/
-sim_top
 reports/

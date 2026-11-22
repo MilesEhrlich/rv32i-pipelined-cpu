@@ -21,7 +21,7 @@
 //
 // Same ports as the single-cycle cpu.v, so either can sit in top.v / c_tb.v.
 module cpu_pipe #(
-    parameter PROGRAM   = "program.hex",
+    parameter PROGRAM   = "",
     parameter DATA_FILE = "",
     parameter MEM_WORDS = 2048
 ) (

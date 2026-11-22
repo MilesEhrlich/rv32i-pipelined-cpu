@@ -9,13 +9,21 @@ instructions-retired counters. Cycle counts on the board match simulation exactl
 | | Single-cycle (`cpu.v`) | 5-stage pipeline (`cpu_pipe.v`) |
 |---|---|---|
 | Clock on board | 27 MHz (oscillator) | 40.5 MHz (PLL: 27 × 3/2) |
-| Fmax, seeds 1–6 | 26.1 – 28.3 MHz | 43.7 – 45.6 MHz |
-| LUT4 | 2928 (33%) | 2503 (28%) |
+| Fmax, seeds 1–6 | 26.3 – 27.1 MHz | 44.3 – 45.4 MHz |
+| LUT4 | 3040 (35%) | 2859 (33%) |
 | Flip-flops | 362 (5%) | 613 (9%) |
 | Block RAM | 8 / 26 | 8 / 26 |
 | riscv-tests rv32ui | 40 / 40 | 40 / 40 |
 
 Utilization numbers include the whole system (UART, counters, I/O).
+
+These numbers move between builds. Place-and-route seeds change Fmax by a few
+percent, and even renaming files changed yosys's logic mapping: the same
+pipeline went from 2503 to 2859 LUTs, and 44.5 to 45.2 MHz, after the repo was
+reorganized. The single-cycle core is right at the edge of 27 MHz (only some
+seeds pass), so `build_soc.sh` uses a seed that passes for it. The benchmark
+timings below don't depend on any of this: cycle counts are fixed by the
+design, and the clock rates are set by the oscillator and PLL.
 
 ## Benchmarks (measured on hardware)
 

@@ -1,5 +1,5 @@
 module cpu #(
-    parameter PROGRAM   = "program.hex",  // loaded into instruction memory
+    parameter PROGRAM   = "",             // hex file loaded into instruction memory
     parameter DATA_FILE = "",             // optional preload of data memory
     parameter MEM_WORDS = 2048            // 8 KB each for imem and dmem
 ) (

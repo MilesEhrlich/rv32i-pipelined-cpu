@@ -4,7 +4,8 @@ module cpu_tb;
     always #5 clk = ~clk;
     integer errors = 0;
 
-    cpu dut (.clk(clk), .rst(rst), .mmio_rdata(32'd0));
+    // Hand-assembled Phase 4 test program (sums 1..10, memory, lui, jal, sub)
+    cpu #(.PROGRAM("tb/program.hex")) dut (.clk(clk), .rst(rst), .mmio_rdata(32'd0));
 
     task check_reg(input [4:0] r, input [31:0] want);
         if (dut.u_rf.regs[r] !== want) begin
@@ -14,7 +15,7 @@ module cpu_tb;
     endtask
 
     initial begin
-        $dumpfile("cpu.vcd");
+        $dumpfile("build/cpu.vcd");
         $dumpvars(0, cpu_tb);
         #12 rst = 0;
         #1000;   // ~100 cycles, plenty for this program

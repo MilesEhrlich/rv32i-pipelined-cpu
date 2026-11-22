@@ -2,6 +2,7 @@
 # Build every official rv32ui test from riscv-tests and run it on the CPU in simulation.
 #   ./tests/run_isa_tests.sh          -> run all
 #   ./tests/run_isa_tests.sh add beq  -> run just those
+#   CORE=single ./tests/run_isa_tests.sh -> single-cycle core
 # Fetch the test sources once with:  git submodule update --init tests/upstream
 DEFS=""; [ "$CORE" = single ] && DEFS="-DSINGLE_CYCLE"
 cd "$(dirname "$0")/.."
@@ -31,7 +32,7 @@ for t in $TESTS; do
     $LLVM/llvm-objdump -d $OUT/$t.elf > $OUT/$t.dis
     rm -f $OUT/sim
     if ! iverilog -g2012 -o $OUT/sim -P c_tb.PROGRAM=\"$OUT/$t.hex\" -P c_tb.MAX_CYCLES=100000 \
-            $DEFS c_tb.v cpu.v cpu_pipe.v regfile.v imm_gen.v alu.v dmem.v imem.v; then
+            $DEFS tb/c_tb.v rtl/cpu.v rtl/cpu_pipe.v rtl/regfile.v rtl/imm_gen.v rtl/alu.v rtl/dmem.v rtl/imem.v; then
         printf "%-8s FAIL  (Verilog compile error)\n" "$t"
         fail=$((fail+1)); failed="$failed $t"; continue
     fi
