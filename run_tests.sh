@@ -11,7 +11,9 @@ check() {  # check "name" "expected text" command...
     if out=$("$@" 2>&1) && echo "$out" | grep -q "$want"; then
         printf "  PASS  %s\n" "$name"
     else
-        printf "  FAIL  %s\n" "$name"; echo "$out" | tail -5 | sed 's/^/        /'
+        printf "  FAIL  %s\n" "$name"
+        # every failing line, plus the tail, so the cause is kept
+        { echo "$out" | grep -iE "fail|error|timeout" | head -20; echo "$out" | tail -3; } | sed 's/^/        /'
         fails=$((fails+1))
     fi
 }

@@ -4,10 +4,12 @@
 //   0x10000004  write: end the simulation with an exit code (0 = pass)
 //   0x10000008  read:  cycle counter since reset
 //   0x10000018  read:  instructions retired since reset
+//   0x10000020  read:  image index (IMAGE parameter); 0x24/0x28 write: result, checksum
 // Pick the program with:  iverilog -P c_tb.PROGRAM=\"sw/build/foo.hex\" ...
 module c_tb;
     parameter PROGRAM   = "sw/build/hello.hex";
     parameter MAX_CYCLES = 2_000_000;
+    parameter IMAGE      = 32'hFFFFFFFF;   // value of the MMIO_IMAGE register
 
     reg clk = 0, rst = 1;
     always #5 clk = ~clk;
@@ -32,6 +34,7 @@ module c_tb;
             32'h10000008: mmio_rdata = cycles;
             32'h10000018: mmio_rdata = instret;
             32'h1000001C: mmio_rdata = 27_000_000;
+            32'h10000020: mmio_rdata = IMAGE;
             default:      mmio_rdata = 32'd0;
         endcase
     end
@@ -50,6 +53,8 @@ module c_tb;
                     $finish;
                 end
                 32'h1000000C: ;   // LEDs: nothing to show in simulation
+                32'h10000024: $display("[result] class %0d", mmio_wdata);
+                32'h10000028: $display("[result] checksum %08h", mmio_wdata);
                 default: $display("warning: store to unmapped I/O address %h", mmio_addr);
             endcase
         end

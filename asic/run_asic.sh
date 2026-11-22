@@ -4,8 +4,10 @@
 #   asic/run_asic.sh 15               -> 15 ns clock target, run tag "p15"
 #   TAG=mytag asic/run_asic.sh 15
 #
-# Needs: Docker (e.g. Colima) and LibreLane in ../asic-venv
-#   (python3 -m venv asic-venv && asic-venv/bin/pip install librelane==3.0.17)
+# Needs: Docker (e.g. Colima) and LibreLane in ~/.venvs/rv32i-asic
+#   (python3 -m venv ~/.venvs/rv32i-asic && ~/.venvs/rv32i-asic/bin/pip install librelane==3.0.17)
+# Keep the venv out of iCloud-synced folders (Documents/Desktop): offloaded
+# files make every start wait on downloads.
 #
 # The flow runs in a staging copy outside the repo (~/.cache/rv32i-asic/<tag>).
 # The repo may live in an iCloud-synced folder, where macOS can offload
@@ -14,7 +16,7 @@
 # asic/results/<tag>/.
 set -e
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
-LIBRELANE="${LIBRELANE:-$REPO/../asic-venv/bin/librelane}"
+LIBRELANE="${LIBRELANE:-$HOME/.venvs/rv32i-asic/bin/librelane}"
 PERIOD="$1"
 TAG="${TAG:-${PERIOD:+p$PERIOD}}"
 TAG="${TAG:-default}"

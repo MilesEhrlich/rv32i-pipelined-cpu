@@ -10,6 +10,9 @@
 #define MMIO_BUTTONS (*(volatile uint32_t *)0x10000014)  // read: bit 0 = S1, bit 1 = S2
 #define MMIO_INSTRET (*(volatile uint32_t *)0x10000018)  // read: instructions retired
 #define MMIO_CLK_HZ  (*(volatile uint32_t *)0x1000001C)  // read: system clock in Hz
+#define MMIO_IMAGE   (*(volatile uint32_t *)0x10000020)  // read: test image to classify (sim/harness)
+#define MMIO_RESULT  (*(volatile uint32_t *)0x10000024)  // write: predicted class
+#define MMIO_CHECK   (*(volatile uint32_t *)0x10000028)  // write: checksum of the logits
 
 void putchar_(char c);
 void puts_(const char *s);

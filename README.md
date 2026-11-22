@@ -30,6 +30,9 @@ muldiv    ok  cycles 194254  instr 180327  CPI 1.077  time 4796 us
   from software. Cycle counts on the board match simulation exactly.
 - **ASIC layout on SkyWater 130 nm**: the core signs off at **90.9 MHz**
   (typical corner) in 0.19 mm², with clean DRC and LVS. See [asic/](asic/).
+- **Fault-injection study**: 33 000 single-bit flips into the running CPU
+  while it classifies digits with an int8 neural network. Which parts of the
+  CPU and model turn a flip into a silent wrong answer. See [fault/](fault/).
 
 ## Results
 
@@ -64,6 +67,25 @@ from RTL to GDS with LibreLane:
 
 Clock sweep, caveats and how to reproduce: **[asic/README.md](asic/README.md)**.
 <br clear="right">
+
+## Fault injection: bit flips vs. a neural network
+
+The CPU runs an integer-only digit classifier (64 → 32 → 10, int8 weights,
+97.6% accuracy, bit-exact with Python). A Verilator harness flips one bit at a
+time in any flip-flop or memory word and records what happens.
+
+![Outcome by structure](fault/figures/outcomes_by_structure.png)
+
+- **Control state crashes, data state lies:** PC flips crash 66% of the time
+  but almost never give a wrong answer; silent wrong answers come from
+  biases (15.7%), code (10.9%) and data registers (6.6%).
+- **Weights are robust:** no single weight flip costs more than 4.4 accuracy
+  points, and only the top two bits of each int8 weight matter.
+- **Biases are the weak spot:** one sign flip drops accuracy to chance, and
+  81% of harmful bias flips hit bits that int32 storage wastes. Storing them
+  as int16 would remove those.
+
+Method, all results, validation and limits: **[fault/README.md](fault/README.md)**.
 
 ## Pipeline
 
@@ -122,6 +144,8 @@ sw/           C toolchain setup and programs (crt0, linker script, runtime, boar
 tests/        riscv-tests runner and bare-metal test environment
 constraints/  pin assignments for the Tang Nano 9K
 asic/         LibreLane config, run script, results and layout for sky130
+ml/           digit classifier: training and integer quantization (Python)
+fault/        fault-injection harness (Verilator), campaigns, analysis, figures
 learning/     earlier exercises: LED blink, logic gates, counter, ripple-carry adder
 ```
 
@@ -129,7 +153,9 @@ learning/     earlier exercises: LED blink, logic gates, counter, ripple-carry a
 
 **Tools:** [OSS CAD Suite](https://github.com/YosysHQ/oss-cad-suite-build)
 (yosys, nextpnr-himbaechel, gowin_pack, openFPGALoader, Icarus Verilog) and
-LLVM with lld for RISC-V (`brew install llvm lld` on macOS).
+LLVM with lld for RISC-V (`brew install llvm lld` on macOS). On macOS, keep
+the toolchain out of iCloud-synced folders such as `~/Documents`: offloaded
+files make every tool start slow and Docker cannot read them.
 
 ```bash
 git clone --recursive https://github.com/MilesEhrlich/rv32i-pipelined-cpu.git
@@ -178,8 +204,9 @@ Bugs that passed simulation but failed on the FPGA:
 
 ## Next steps
 
-- Fault-injection study: flip bits in registers and memory while a small
-  neural network runs on the CPU, and measure which flips change its output
+- Hardware fault injection on the FPGA, to confirm the simulated results
+- Protect the vulnerable state found above (int16 biases, parity on the PC
+  and return address) and measure the improvement
 - Close timing at the slow ASIC corner; add SRAM macros for a full chip
 - Branch prediction (resolve `jal` in ID, a small BTB) to cut the taken-branch penalty
 - Instruction and data caches, with memory in the board's PSRAM

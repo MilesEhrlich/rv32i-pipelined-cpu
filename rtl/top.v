@@ -6,6 +6,7 @@
 //   0x10000014  R  buttons (bit 0 = S1, bit 1 = S2; 1 = pressed)
 //   0x10000018  R  instructions retired
 //   0x1000001C  R  system clock frequency in Hz
+//   0x10000020  R  image select for sw/digits.c (always "all" here)
 // S1 also resets the CPU.
 //
 // Clock: the pipelined core runs at 40.5 MHz from the PLL (27 MHz x 3/2;
@@ -113,6 +114,7 @@ module top #(parameter PROGRAM = "sw/build/board.hex") (
             8'h14:   mmio_rdata = {30'd0, btn_sync};
             8'h18:   mmio_rdata = instret;
             8'h1C:   mmio_rdata = CLK_HZ;
+            8'h20:   mmio_rdata = 32'hFFFFFFFF;   // image select: "all" on the board
             default: mmio_rdata = 32'd0;
         endcase
     end

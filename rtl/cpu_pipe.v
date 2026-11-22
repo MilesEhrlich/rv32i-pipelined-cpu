@@ -4,7 +4,7 @@
 module cpu_pipe #(
     parameter PROGRAM   = "",
     parameter DATA_FILE = "",
-    parameter MEM_WORDS = 2048
+    parameter MEM_WORDS = 4096            // 16 KB each for imem and dmem
 ) (
     input  wire        clk,
     input  wire        rst,

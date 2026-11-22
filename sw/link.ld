@@ -1,7 +1,7 @@
-/* Memory map: code + data share one 8 KB image starting at 0.
+/* Memory map: code + data share one 16 KB image starting at 0.
    imem holds the code, dmem is preloaded with the same image so
    .rodata/.data are readable. Stack grows down from the top of dmem. */
-MEMORY { RAM (rwx) : ORIGIN = 0x00000000, LENGTH = 8K }
+MEMORY { RAM (rwx) : ORIGIN = 0x00000000, LENGTH = 16K }
 ENTRY(_start)
 SECTIONS {
     .text   : { *(.text.start) *(.text*) } > RAM

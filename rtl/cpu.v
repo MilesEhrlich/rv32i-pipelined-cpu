@@ -1,7 +1,7 @@
 module cpu #(
     parameter PROGRAM   = "",             // hex file loaded into instruction memory
     parameter DATA_FILE = "",             // optional preload of data memory
-    parameter MEM_WORDS = 2048            // 8 KB each for imem and dmem
+    parameter MEM_WORDS = 4096            // 16 KB each for imem and dmem
 ) (
     input  wire        clk,
     input  wire        rst,

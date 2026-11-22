@@ -80,10 +80,10 @@ the post-route repair steps.
 ## Reproducing
 
 Needs Docker (on macOS, [Colima](https://github.com/abiosoft/colima) works)
-and LibreLane in a virtualenv next to the repo:
+and LibreLane in a virtualenv outside any iCloud-synced folder:
 
 ```bash
-python3 -m venv ../asic-venv && ../asic-venv/bin/pip install librelane==3.0.17
+python3 -m venv ~/.venvs/rv32i-asic && ~/.venvs/rv32i-asic/bin/pip install librelane==3.0.17
 colima start --cpu 6 --memory 8 --vm-type vz
 ```
 
