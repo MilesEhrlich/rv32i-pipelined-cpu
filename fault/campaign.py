@@ -8,16 +8,33 @@ and prints an outcome summary with 95% confidence intervals.
     fault/build.sh
     ~/.venvs/rv32i-ml/bin/python fault/campaign.py              # all targets, 3000 trials each
     ~/.venvs/rv32i-ml/bin/python fault/campaign.py --trials 500 --targets regfile pc
+    ~/.venvs/rv32i-ml/bin/python fault/campaign.py --variant hard   # hardened build
+
+Results go to fault/results/ (baseline) or fault/results_hard/ (hardened).
 """
 import argparse, csv, io, math, os, subprocess, sys
 from concurrent.futures import ThreadPoolExecutor
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SIM = os.path.join(REPO, "build/fault/fi_sim")
-ELF = os.path.join(REPO, "sw/build/digits.elf")
-HEX = os.path.join(REPO, "sw/build/digits.hex")
 LLVM = "/opt/homebrew/opt/llvm/bin"
-OUTCOMES = ["masked", "tolerated", "sdc", "crash"]
+OUTCOMES = ["masked", "tolerated", "sdc", "crash", "detected"]
+# variant -> (simulator, program, results directory, extra fi_sim arguments)
+VARIANTS = {
+    "base": ("build/fault/fi_sim", "digits", "fault/results", []),
+    "hard": ("build/fault_hard/fi_sim", "digits_hard", "fault/results_hard", ["parity=1"]),
+    # int16 biases only (no checksum, no parity): isolates the storage-format fix
+    "b16":  ("build/fault/fi_sim", "digits_b16", "fault/results_b16", []),
+}
+SIM = ELF = HEX = OUTDIR = None
+EXTRA = []
+
+
+def use_variant(v):
+    global SIM, ELF, HEX, OUTDIR, EXTRA
+    sim, prog, out, extra = VARIANTS[v]
+    SIM, OUTDIR, EXTRA = os.path.join(REPO, sim), os.path.join(REPO, out), extra
+    ELF = os.path.join(REPO, f"sw/build/{prog}.elf")
+    HEX = os.path.join(REPO, f"sw/build/{prog}.hex")
 
 
 def symbols():
@@ -67,7 +84,7 @@ def wilson(k, n, z=1.96):
 def run_target(name, args, text_end, trials, workers, seed):
     per = [trials // workers + (1 if i < trials % workers else 0) for i in range(workers)]
     def job(i):
-        cmd = [SIM, f"hex={HEX}", f"text_end={text_end}", f"trials={per[i]}", f"seed={seed * 1000 + i}"] + args
+        cmd = [SIM, f"hex={HEX}", f"text_end={text_end}", f"trials={per[i]}", f"seed={seed * 1000 + i}"] + args + EXTRA
         return subprocess.run(cmd, capture_output=True, text=True, check=True).stdout
     with ThreadPoolExecutor(workers) as ex:
         outs = list(ex.map(job, range(workers)))
@@ -83,20 +100,22 @@ def main():
     ap.add_argument("--workers", type=int, default=6)
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--targets", nargs="*")
+    ap.add_argument("--variant", choices=list(VARIANTS), default="base")
     a = ap.parse_args()
+    use_variant(a.variant)
 
     syms = symbols()
     t0, tlen = syms[".text"]
     text_end = t0 + tlen
     tg = targets(syms)
     names = a.targets or list(tg)
-    os.makedirs(os.path.join(REPO, "fault/results"), exist_ok=True)
+    os.makedirs(OUTDIR, exist_ok=True)
 
     print(f"{'target':10} {'trials':>7}  " + "  ".join(f"{o:>17}" for o in OUTCOMES))
     for name in names:
         args, desc = tg[name]
         rows = run_target(name, args, text_end, a.trials, a.workers, a.seed)
-        path = os.path.join(REPO, f"fault/results/{name}.csv")
+        path = os.path.join(OUTDIR, f"{name}.csv")
         with open(path, "w", newline="") as f:
             w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
             w.writeheader(); w.writerows(rows)

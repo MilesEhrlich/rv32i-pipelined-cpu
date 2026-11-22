@@ -13,6 +13,8 @@
 #define MMIO_IMAGE   (*(volatile uint32_t *)0x10000020)  // read: test image to classify (sim/harness)
 #define MMIO_RESULT  (*(volatile uint32_t *)0x10000024)  // write: predicted class
 #define MMIO_CHECK   (*(volatile uint32_t *)0x10000028)  // write: checksum of the logits
+#define MMIO_FAULT   (*(volatile uint32_t *)0x1000002C)  // write FAULT_MAGIC: fault detected
+#define FAULT_MAGIC  0xFA17DE7Cu   // a value a corrupted result/checksum write can't produce by chance
 
 void putchar_(char c);
 void puts_(const char *s);

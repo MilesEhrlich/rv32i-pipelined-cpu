@@ -19,10 +19,16 @@
 //            redirects fetch in the same cycle, squashing the 1 instruction
 //            behind it (1-cycle penalty)
 //
+// PARITY=1 adds a parity bit to every register (see regfile.v). rf_err
+// pulses when an instruction in EX used a register value whose parity was
+// wrong when it was read in ID; the system should stop the CPU (fail-stop).
+// Values taken from the WB bypass or the forwarding paths did not come from
+// the register file and are not checked.
+//
 // Memories are outside the core (cpu_pipe.v wraps it with FPGA block RAM;
 // an ASIC build connects SRAM macros). Both ports expect a SYNCHRONOUS
 // memory: data is returned the cycle after the address is presented.
-module cpu_core (
+module cpu_core #(parameter PARITY = 0) (
     input  wire        clk,
     input  wire        rst,
     // instruction memory
@@ -41,7 +47,8 @@ module cpu_core (
     output wire [31:0] mmio_wdata,
     input  wire [31:0] mmio_rdata,
     output reg         retire,        // 1 for each instruction completing WB
-    output wire [31:0] pc             // PC of the instruction in ID (debug)
+    output wire [31:0] pc,            // PC of the instruction in ID (debug)
+    output wire        rf_err         // register-file parity error (PARITY=1)
 );
     localparam OP_R      = 7'b0110011, OP_I     = 7'b0010011,
                OP_LOAD   = 7'b0000011, OP_STORE = 7'b0100011,
@@ -117,11 +124,15 @@ module cpu_core (
     imm_gen u_imm (.instr(instr_D), .imm(imm_D));
 
     wire [31:0] rf1, rf2;
-    regfile u_rf (.clk(clk), .we(wb_we), .rs1(rs1_D), .rs2(rs2_D),
-                  .rd(wb_rd), .wd(wb_val), .rd1(rf1), .rd2(rf2));
+    wire        rf_perr1, rf_perr2;
+    regfile #(.PARITY(PARITY)) u_rf (.clk(clk), .we(wb_we), .rs1(rs1_D), .rs2(rs2_D),
+                  .rd(wb_rd), .wd(wb_val), .rd1(rf1), .rd2(rf2),
+                  .perr1(rf_perr1), .perr2(rf_perr2));
     // WB -> ID bypass: a register written this cycle is read in the same cycle
-    wire [31:0] rs1_val_D = (wb_we && wb_rd != 0 && wb_rd == rs1_D) ? wb_val : rf1;
-    wire [31:0] rs2_val_D = (wb_we && wb_rd != 0 && wb_rd == rs2_D) ? wb_val : rf2;
+    wire byp1_D = wb_we && wb_rd != 0 && wb_rd == rs1_D;
+    wire byp2_D = wb_we && wb_rd != 0 && wb_rd == rs2_D;
+    wire [31:0] rs1_val_D = byp1_D ? wb_val : rf1;
+    wire [31:0] rs2_val_D = byp2_D ? wb_val : rf2;
 
     // ---- ID/EX register ----
     reg        ex_valid, ex_reg_we, ex_load, ex_store, ex_br, ex_jal, ex_jalr, ex_b_imm;
@@ -131,6 +142,7 @@ module cpu_core (
     reg [4:0]  ex_rd;
     reg [31:0] ex_pc, ex_imm, ex_rs1_val, ex_rs2_val;
     reg        ex_fm1, ex_fw1, ex_fm2, ex_fw2;   // forwarding selects, decided in ID
+    reg        ex_perr;                          // used a register with bad parity
 
     // Load-use hazard: a load's data is not forwardable until it reaches WB
     assign stall = ex_valid && ex_load && ex_rd != 0 &&
@@ -143,6 +155,10 @@ module cpu_core (
     wire fw1_D = mem_reg_we && mem_rd != 0 && mem_rd == rs1_D;
     wire fm2_D = ex_reg_we  && ex_rd  != 0 && ex_rd  == rs2_D;
     wire fw2_D = mem_reg_we && mem_rd != 0 && mem_rd == rs2_D;
+
+    // Parity: only flag values this instruction really takes from the file
+    wire perr_D = (uses_rs1 && rf_perr1 && !byp1_D && !fm1_D && !fw1_D) ||
+                  (uses_rs2 && rf_perr2 && !byp2_D && !fm2_D && !fw2_D);
 
     always @(posedge clk) begin
         if (rst || stall || redirect) begin          // insert a bubble
@@ -159,7 +175,9 @@ module cpu_core (
         ex_rs1_val <= rs1_val_D; ex_rs2_val <= rs2_val_D;
         ex_fm1 <= uses_rs1 && fm1_D;  ex_fw1 <= uses_rs1 && fw1_D;
         ex_fm2 <= uses_rs2 && fm2_D;  ex_fw2 <= uses_rs2 && fw2_D;
+        ex_perr <= perr_D;
     end
+    assign rf_err = ex_valid && ex_perr;       // bubbles never report
 
     // =====================================================================
     // EX

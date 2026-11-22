@@ -32,7 +32,9 @@ muldiv    ok  cycles 194254  instr 180327  CPI 1.077  time 4796 us
   (typical corner) in 0.19 mm², with clean DRC and LVS. See [asic/](asic/).
 - **Fault-injection study**: 33 000 single-bit flips into the running CPU
   while it classifies digits with an int8 neural network. Which parts of the
-  CPU and model turn a flip into a silent wrong answer. See [fault/](fault/).
+  CPU and model turn a flip into a silent wrong answer, then hardening
+  (register parity, int16 biases, a model checksum) that cuts silent wrong
+  answers from 4.2% to 1.8% of flips. See [fault/](fault/).
 
 ## Results
 
@@ -82,8 +84,13 @@ time in any flip-flop or memory word and records what happens.
 - **Weights are robust:** no single weight flip costs more than 4.4 accuracy
   points, and only the top two bits of each int8 weight matter.
 - **Biases are the weak spot:** one sign flip drops accuracy to chance, and
-  81% of harmful bias flips hit bits that int32 storage wastes. Storing them
-  as int16 would remove those.
+  81% of harmful bias flips hit bits that int32 storage wastes.
+- **Hardening fixes the weak spots:** register parity (fail-stop) takes the
+  register file from 6.6% silent wrong answers and 15.8% crashes to zero;
+  a model checksum detects every weight and bias flip for 7.4% more cycles;
+  int16 biases alone cut bias SDC from 15.7% to 2.9% for free.
+
+![Baseline vs hardened](fault/figures/hardening.png)
 
 Method, all results, validation and limits: **[fault/README.md](fault/README.md)**.
 
@@ -203,8 +210,8 @@ Bugs that passed simulation but failed on the FPGA:
 ## Next steps
 
 - Hardware fault injection on the FPGA, to confirm the simulated results
-- Protect the vulnerable state found above (int16 biases, parity on the PC
-  and return address) and measure the improvement
+- Protect what hardening leaves exposed: the pipeline registers and the
+  code (ECC on the memories)
 - Close timing at the slow ASIC corner; add SRAM macros for a full chip
 - Branch prediction (resolve `jal` in ID, a small BTB) to cut the taken-branch penalty
 - Instruction and data caches, with memory in the board's PSRAM

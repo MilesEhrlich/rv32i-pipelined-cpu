@@ -7,7 +7,15 @@
 //                 checksum through MMIO (used by the fault-injection harness)
 //   anything else classify all test images, check every result bit-exactly
 //                 against the Python reference, print accuracy
+//
+// Hardened build (make PROG=digits OUT=digits_hard DEFS="-DBIAS16 -DMODEL_CHECK"):
+//   BIAS16       biases stored as int16 instead of int32 (same values)
+//   MODEL_CHECK  verify a checksum of all weights and biases before
+//                classifying; on mismatch, report through MMIO_FAULT and stop
 #include "mmio.h"
+#ifdef BIAS16
+#define BIAS_T int16_t
+#endif
 #include "ml_model.h"
 
 // x * w for small unsigned x (input pixel 0..16 or hidden unit 0..127)
@@ -47,9 +55,40 @@ static uint32_t checksum(const int32_t *out) {      // same as ml/train.py
     return s;
 }
 
+#ifdef MODEL_CHECK
+// same as model_sum() in ml/train.py; every array is word-aligned and a
+// whole number of words long
+static uint32_t sum_words(uint32_t s, const void *p, uint32_t bytes) {
+    const uint32_t *w = (const uint32_t *)p;
+    // Hide the pointer from the optimizer. The arrays are compile-time
+    // constants, so without this clang computes the small ones' part of the
+    // checksum at compile time (the bias words became instruction
+    // immediates) and the check never reads that memory.
+    __asm__ volatile("" : "+r"(w));
+    for (uint32_t i = 0; i < bytes / 4; i++) s = ((s << 5) | (s >> 27)) ^ w[i];
+    return s;
+}
+
+static int model_ok(void) {
+    uint32_t s = sum_words(0, W1, sizeof W1);
+    s = sum_words(s, b1, sizeof b1);
+    s = sum_words(s, W2, sizeof W2);
+    s = sum_words(s, b2, sizeof b2);
+    return s == MODEL_SUM;
+}
+#endif
+
 int main(void) {
     int32_t out[N_OUT];
     uint32_t idx = MMIO_IMAGE;
+
+#ifdef MODEL_CHECK
+    if (!model_ok()) {                               // corrupted model: fail-stop
+        MMIO_FAULT = FAULT_MAGIC;
+        puts_("model checksum mismatch\r\n");
+        return 3;
+    }
+#endif
 
     if (idx < N_TEST) {                              // one image (fault trials)
         int c = classify(&test_x[idx * N_IN], out);

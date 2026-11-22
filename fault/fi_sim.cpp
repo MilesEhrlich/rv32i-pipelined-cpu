@@ -14,6 +14,8 @@
 //   crash      no usable output: hang (no exit within 3x the fault-free
 //              cycles), non-zero exit, an instruction from outside the
 //              program's code executed, or the result/checksum never reported
+//   detected   the hardened build caught the fault and stopped: register
+//              parity error (rf_err) or the model checksum (MMIO_FAULT)
 //
 // Usage: fi_sim key=value ...
 //   hex=sw/build/digits.hex  text_end=0x...   (end of .text, from the ELF)
@@ -21,6 +23,8 @@
 //   region=start:len[,start:len]  (for target=dmem / imem: byte ranges to hit)
 //   at=start                 inject at cycle 0 (persistent memory faults)
 //   golden=1                 run every image once without faults
+//   parity=1                 the core was built with PARITY=1: the regfile
+//                            target also includes the 31 parity bits
 // Output: one CSV line per trial on stdout.
 #include "Vcpu_core.h"
 #include "Vcpu_core___024root.h"
@@ -47,7 +51,7 @@ struct Sim {
     uint32_t text_end = 0, cycle = 0;
     // MMIO state
     uint32_t image_sel = 0, result = 0xFFFFFFFF, check = 0, exit_code = 0;
-    bool exited = false, wild = false, got_result = false, got_check = false;
+    bool exited = false, wild = false, got_result = false, got_check = false, detected = false;
 
     explicit Sim(const std::vector<uint32_t>& img, uint32_t te) : image(img), text_end(te) {
         top = new Vcpu_core;
@@ -58,9 +62,9 @@ struct Sim {
         imem = image; imem.resize(MEM_WORDS, 0);
         dmem = image; dmem.resize(MEM_WORDS, 0);
         image_sel = img_sel; result = 0xFFFFFFFF; check = 0; exit_code = 0;
-        exited = false; wild = false; got_result = false; got_check = false; cycle = 0;
+        exited = false; wild = false; got_result = false; got_check = false; detected = false; cycle = 0;
         auto* r = top->rootp;
-        for (int i = 0; i < 32; i++) r->cpu_core__DOT__u_rf__DOT__regs[i] = 0;
+        for (int i = 0; i < 32; i++) { r->cpu_core__DOT__u_rf__DOT__regs[i] = 0; r->cpu_core__DOT__u_rf__DOT__par[i] = 0; }
         top->rst = 1; top->imem_rdata = 0; top->dmem_rdata = 0; top->mmio_rdata = 0;
         for (int i = 0; i < 3; i++) step(true);
         top->rst = 0;
@@ -85,6 +89,9 @@ struct Sim {
                 case 0x10000004: exited = true; exit_code = top->mmio_wdata; break;
                 case 0x10000024: result = top->mmio_wdata; got_result = true; break;
                 case 0x10000028: check  = top->mmio_wdata; got_check = true; break;
+                case 0x1000002C:                 // MMIO_FAULT, only with the magic value:
+                    if (top->mmio_wdata == 0xFA17DE7Cu) detected = true;   // a flipped s3 can
+                    break;                       // redirect the result write here
                 default: break;                  // UART output etc.: ignored
             }
         }
@@ -101,13 +108,14 @@ struct Sim {
         if (!in_reset) {
             auto* r = top->rootp;
             if (r->cpu_core__DOT__ex_valid && r->cpu_core__DOT__ex_pc >= text_end) wild = true;
+            if (top->rf_err) detected = true;      // fail-stop on parity error
             cycle++;
         }
     }
 
     // run until exit, wild execution, or cycle limit
     void run(uint32_t limit) {
-        while (!exited && !wild && cycle < limit) step();
+        while (!exited && !wild && !detected && cycle < limit) step();
     }
 };
 
@@ -137,6 +145,11 @@ static void flip_named(Sim& s, const Bit& b) {
         xor_bit(r->cpu_core__DOT__u_rf__DOT__regs[reg], b.bit);
         return;
     }
+    if (n.rfind("p", 0) == 0 && n.size() <= 3) {    // p1..p31: parity bits
+        int reg = atoi(n.c_str() + 1);
+        r->cpu_core__DOT__u_rf__DOT__par[reg] ^= 1;
+        return;
+    }
     if (n == "instr") { xor_bit(s.top->imem_rdata, b.bit); s.top->eval(); return; }
     if (n == "ldata") { xor_bit(s.top->dmem_rdata, b.bit); s.top->eval(); return; }
     if (n.rfind("dmem@", 0) == 0 || n.rfind("imem@", 0) == 0) {
@@ -149,6 +162,8 @@ static void flip_named(Sim& s, const Bit& b) {
     fprintf(stderr, "unknown site %s\n", n.c_str()); exit(2);
 }
 
+static bool g_parity = false;
+
 static std::vector<Field> fields_for(const std::string& t) {
     if (t == "pc")     return {{"pc_D", 32}};
     if (t == "id_ex")  return {{"ex_valid",1},{"ex_reg_we",1},{"ex_load",1},{"ex_store",1},{"ex_br",1},
@@ -160,7 +175,8 @@ static std::vector<Field> fields_for(const std::string& t) {
     if (t == "mem_wb") return {{"wb_we",1},{"wb_rd",5},{"wb_val",32}};
     if (t == "regfile") { static std::vector<std::string> names; static std::vector<Field> f;
         if (f.empty()) { for (int i = 1; i < 32; i++) names.push_back("x" + std::to_string(i));
-                         for (auto& nm : names) f.push_back({nm.c_str(), 32}); }
+                         if (g_parity) for (int i = 1; i < 32; i++) names.push_back("p" + std::to_string(i));
+                         for (auto& nm : names) f.push_back({nm.c_str(), nm[0] == 'p' ? 1 : 32}); }
         return f; }
     if (t == "instr")  return {{"instr", 32}};
     if (t == "ldata")  return {{"ldata", 32}};
@@ -185,12 +201,13 @@ int main(int argc, char** argv) {
     auto img = load_hex(get("hex", "sw/build/digits.hex").c_str());
     uint32_t text_end = strtoul(get("text_end", "0").c_str(), nullptr, 0);
     Sim sim(img, text_end ? text_end : 0xFFFFFFFF);
+    g_parity = get("parity", "0") == "1";
 
     // fault-free reference for every image
     std::vector<Golden> gold(N_TEST);
     for (int n = 0; n < N_TEST; n++) {
         sim.reset(n); sim.run(5'000'000);
-        if (!sim.exited || sim.exit_code || sim.wild) { fprintf(stderr, "golden run %d failed\n", n); return 1; }
+        if (!sim.exited || sim.exit_code || sim.wild || sim.detected) { fprintf(stderr, "golden run %d failed\n", n); return 1; }
         gold[n] = {sim.result, sim.check, sim.cycle};
     }
     if (get("golden", "0") == "1") {
@@ -237,7 +254,8 @@ int main(int argc, char** argv) {
         if (!sim.exited && !sim.wild) flip_named(sim, b);
         sim.run(3 * gold[n].cycles);
         const char* out;
-        if (sim.wild || !sim.exited || sim.exit_code || !sim.got_result || !sim.got_check) out = "crash";
+        if (sim.detected)                               out = "detected";
+        else if (sim.wild || !sim.exited || sim.exit_code || !sim.got_result || !sim.got_check) out = "crash";
         else if (sim.result != gold[n].cls)            out = "sdc";
         else if (sim.check != gold[n].sum)              out = "tolerated";
         else                                            out = "masked";

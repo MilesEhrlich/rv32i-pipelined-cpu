@@ -10,8 +10,16 @@
 #define SHIFT1 7
 #define N_TEST 100
 
+// Bias storage type: int32_t by default; the hardened build uses int16_t
+// (same values; the largest bias needs 11 bits)
+#ifndef BIAS_T
+#define BIAS_T int32_t
+#endif
+// expected integrity checksum of W1, b1, W2, b2 (see model_sum in ml/train.py)
+#define MODEL_SUM (sizeof(BIAS_T) == 2 ? 0xedf40f27u : 0x752db3e9u)
+
 // W1[i][j] stored row-major (input i, hidden j); W2[j][k] likewise
-static const int8_t W1[2048] = {
+static const int8_t W1[2048] __attribute__((aligned(4))) = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     -28, -67, 61, 26, -9, 52, 10, 111, 20, 21, 47, 39, 42, -14, -51, -2,
@@ -142,12 +150,12 @@ static const int8_t W1[2048] = {
     -5, 21, 92, 78, 63, -61, 7, 45, -29, -75, 28, 17, 19, -32, -64, 48
 };
 
-static const int32_t b1[32] = {
+static const BIAS_T b1[32] __attribute__((aligned(4))) = {
     705, -344, 680, 128, 449, -46, 640, -932, -178, 322, 685, -28, 77, 174, 351, 467,
     232, 198, -187, -204, 492, 522, 32, 317, 633, 174, -107, 267, 35, 279, 398, 544
 };
 
-static const int8_t W2[320] = {
+static const int8_t W2[320] __attribute__((aligned(4))) = {
     5, -94, -69, 19, 110, -95, 0, -13, 124, -62, -38, 30, -84, -5, 4, -3,
     39, -89, -32, 40, -38, -23, -40, 43, 58, 48, -22, 61, -54, -22, -46, -77,
     -30, -95, 104, -6, 42, 59, -124, -56, 24, 1, -47, -21, 31, -13, -11, 32,
@@ -170,7 +178,7 @@ static const int8_t W2[320] = {
     -10, 7, -50, 61, -27, 31, 46, 51, 18, -74, 26, -81, -21, -26, 33, -10
 };
 
-static const int32_t b2[10] = {
+static const BIAS_T b2[10] __attribute__((aligned(4))) = {
     320, 190, -245, 47, 83, 361, -498, 16, -217, -326
 };
 

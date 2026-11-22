@@ -96,6 +96,44 @@ corrupts something on the one cycle a load is consuming it. The **fetched
 instruction** is similar but riskier (7% SDC + crash), because every cycle
 consumes an instruction.
 
+## Hardening: fixing the weak spots
+
+Three changes aimed at the findings above, each switchable so the baseline
+stays reproducible:
+
+| Change | Where | Targets | Cost |
+|---|---|---|---|
+| **Register parity, fail-stop** | `regfile.v`, `cpu_core.v` (`PARITY=1`) | finding 2 | 32 parity bits, two XOR trees; checked only when an instruction really takes the value from the register file (not from a bypass or forward) |
+| **int16 biases** | `digits.c` (`-DBIAS16`) | finding 4 | none (saves 84 bytes) |
+| **Model checksum** before inference | `digits.c` (`-DMODEL_CHECK`) | findings 3–4 | 7.4% more cycles per image |
+
+Same 11 structures, 3 000 trials each, same seeds:
+
+![Baseline vs hardened](figures/hardening.png)
+
+- **Silent wrong answers fell from 4.2% to 1.8%** of all 33 000 flips;
+  crashes fell from 9.8% to 8.1%.
+- **Register file: 6.6% SDC and 15.8% crash became 0% and 0%.** Every
+  harmful flip is now caught (46% of flips are detected; the rest are masked).
+- **Weights and biases: every flip is detected** (100%, the checksum
+  guarantees it for single-bit flips).
+- **int16 biases alone**, with no checksum, cut bias SDC from 15.7% to 2.9%
+  at zero runtime cost, as the bit-position analysis predicted.
+- What is left is unprotected logic: the pipeline registers, the fetched
+  instruction, the code in instruction memory and the PC. Covering those
+  takes ECC on the memories or duplicated logic, both much more expensive.
+
+Full table: [results_hard/summary.md](results_hard/summary.md).
+
+**A compiler bug in my check, caught by the campaign.** The first hardened
+run detected 100% of weight flips but 0% of bias flips. The weights and
+biases are compile-time constants, so clang computed the biases' share of
+the checksum at compile time (the bias words became `lui`/`addi`
+immediates in the code) and the check never read bias memory. The fix is
+one empty `asm` statement that hides the pointer from the optimizer. An
+integrity check is only as good as the evidence that it reads what it
+claims to protect, and fault injection is that evidence.
+
 ## Is the injector right?
 
 - **Fault-free runs** match the Python model on all 100 images (class and a
@@ -128,6 +166,10 @@ python3 -m venv ~/.venvs/rv32i-ml && ~/.venvs/rv32i-ml/bin/pip install numpy sci
 fault/build.sh                                      # Verilator build + sw/digits.c
 ~/.venvs/rv32i-ml/bin/python fault/campaign.py      # 33 000 trials, ~2 minutes on 6 cores
 ~/.venvs/rv32i-ml/bin/python fault/analyze.py       # cross-check, sweep, figures, summary
+# hardened build
+~/.venvs/rv32i-ml/bin/python fault/campaign.py --variant hard
+~/.venvs/rv32i-ml/bin/python fault/campaign.py --variant b16 --targets biases
+~/.venvs/rv32i-ml/bin/python fault/compare.py       # figure + results_hard/summary.md
 ```
 
 Raw trial data: `results/<structure>.csv` (one row per trial: site, bit,
