@@ -15,7 +15,8 @@ module dmem #(parameter WORDS = 1024, parameter FILE = "") (
     input  wire [2:0]  funct3,      // access size and signedness
     input  wire [31:0] addr,
     input  wire [31:0] wd,
-    output reg  [31:0] rd
+    output reg  [31:0] rd,
+    output wire [31:0] word_out    // raw registered word (pipeline extracts in MEM)
 );
     localparam AW = $clog2(WORDS);
     wire [AW-1:0] idx = addr[AW+1:2];
@@ -51,6 +52,8 @@ module dmem #(parameter WORDS = 1024, parameter FILE = "") (
         end
         assign word[8*k +: 8] = q;
     end endgenerate
+
+    assign word_out = word;
 
     // Loads: pick and extend the addressed byte/half from the registered word
     wire [31:0] shifted = word >> {off, 3'b000};

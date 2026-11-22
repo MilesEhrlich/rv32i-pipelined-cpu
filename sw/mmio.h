@@ -8,8 +8,8 @@
 #define MMIO_LEDS    (*(volatile uint32_t *)0x1000000C)  // read/write: 6 LEDs, 1 = on
 #define MMIO_UART_ST (*(volatile uint32_t *)0x10000010)  // read: bit 0 = UART busy
 #define MMIO_BUTTONS (*(volatile uint32_t *)0x10000014)  // read: bit 0 = S1, bit 1 = S2
-
-#define CLOCK_HZ 27000000u
+#define MMIO_INSTRET (*(volatile uint32_t *)0x10000018)  // read: instructions retired
+#define MMIO_CLK_HZ  (*(volatile uint32_t *)0x1000001C)  // read: system clock in Hz
 
 void putchar_(char c);
 void puts_(const char *s);

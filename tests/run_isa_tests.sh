@@ -3,6 +3,7 @@
 #   ./tests/run_isa_tests.sh          -> run all
 #   ./tests/run_isa_tests.sh add beq  -> run just those
 # Fetch the test sources once with:  git submodule update --init tests/upstream
+DEFS=""; [ "$CORE" = single ] && DEFS="-DSINGLE_CYCLE"
 cd "$(dirname "$0")/.."
 LLVM=/opt/homebrew/opt/llvm/bin
 LLD=/opt/homebrew/opt/lld/bin
@@ -30,7 +31,7 @@ for t in $TESTS; do
     $LLVM/llvm-objdump -d $OUT/$t.elf > $OUT/$t.dis
     rm -f $OUT/sim
     if ! iverilog -g2012 -o $OUT/sim -P c_tb.PROGRAM=\"$OUT/$t.hex\" -P c_tb.MAX_CYCLES=100000 \
-            c_tb.v cpu.v regfile.v imm_gen.v alu.v dmem.v imem.v; then
+            $DEFS c_tb.v cpu.v cpu_pipe.v regfile.v imm_gen.v alu.v dmem.v imem.v; then
         printf "%-8s FAIL  (Verilog compile error)\n" "$t"
         fail=$((fail+1)); failed="$failed $t"; continue
     fi

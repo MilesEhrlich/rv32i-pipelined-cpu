@@ -10,7 +10,8 @@ module cpu #(
     output wire        mmio_re,      // load from an I/O address this cycle
     output wire [31:0] mmio_addr,
     output wire [31:0] mmio_wdata,
-    input  wire [31:0] mmio_rdata
+    input  wire [31:0] mmio_rdata,
+    output wire        retire        // 1 when an instruction completes this cycle
 );
     // ---------- Fetch ----------
     reg  [31:0] pc;
@@ -130,6 +131,7 @@ module cpu #(
     end
 
     assign pc_next_eff = stall ? pc : next_pc;
+    assign retire      = !stall && !rst;
 
     always @(posedge clk) begin
         if (rst) pc <= 32'd0;

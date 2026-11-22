@@ -4,8 +4,9 @@
 #   ./run_c.sh foo      -> sw/foo.c
 set -e
 PROG=${1:-hello}
+DEFS=""; [ "$CORE" = single ] && DEFS="-DSINGLE_CYCLE"
 cd "$(dirname "$0")"
 make -s -C sw PROG="$PROG"
 iverilog -g2012 -o sim_c -P c_tb.PROGRAM=\"sw/build/$PROG.hex\" \
-    c_tb.v cpu.v regfile.v imm_gen.v alu.v dmem.v imem.v
+    $DEFS c_tb.v cpu.v cpu_pipe.v regfile.v imm_gen.v alu.v dmem.v imem.v
 vvp -n sim_c | grep -v readmemh
