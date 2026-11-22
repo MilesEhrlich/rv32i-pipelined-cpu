@@ -17,7 +17,7 @@ all: build/$(PROG).hex
 build/$(PROG).elf: crt0.S runtime.c $(PROG).c mmio.h link.ld | build
 	$(CC) $(CFLAGS) $(LDFLAGS) -ffunction-sections -o $@ crt0.S runtime.c $(PROG).c
 
-build/$(PROG).hex: build/$(PROG).elf
+build/$(PROG).hex: build/$(PROG).elf bin2hex.py
 	$(OBJCOPY) -O binary $< build/$(PROG).bin
 	python3 bin2hex.py build/$(PROG).bin $@
 	$(OBJDUMP) -d $< > build/$(PROG).dis

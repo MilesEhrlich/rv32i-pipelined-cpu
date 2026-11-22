@@ -28,8 +28,12 @@ for t in $TESTS; do
     $LLVM/llvm-objcopy -O binary $OUT/$t.elf $OUT/$t.bin
     python3 sw/bin2hex.py $OUT/$t.bin $OUT/$t.hex
     $LLVM/llvm-objdump -d $OUT/$t.elf > $OUT/$t.dis
-    iverilog -g2012 -o $OUT/sim -P c_tb.PROGRAM=\"$OUT/$t.hex\" -P c_tb.MAX_CYCLES=100000 \
-        c_tb.v cpu.v regfile.v imm_gen.v alu.v dmem.v imem.v
+    rm -f $OUT/sim
+    if ! iverilog -g2012 -o $OUT/sim -P c_tb.PROGRAM=\"$OUT/$t.hex\" -P c_tb.MAX_CYCLES=100000 \
+            c_tb.v cpu.v regfile.v imm_gen.v alu.v dmem.v imem.v; then
+        printf "%-8s FAIL  (Verilog compile error)\n" "$t"
+        fail=$((fail+1)); failed="$failed $t"; continue
+    fi
     result=$(vvp -n $OUT/sim | grep -v readmemh)
     if echo "$result" | grep -q "C TEST PASSED"; then
         printf "%-8s PASS\n" "$t"; pass=$((pass+1))

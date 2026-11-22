@@ -14,8 +14,12 @@ module cpu #(
 );
     // ---------- Fetch ----------
     reg  [31:0] pc;
+    reg  [31:0] next_pc;            // computed below
+    wire [31:0] pc_next_eff;        // next_pc, or pc while a load waits; drives imem
+    wire [31:0] alu_y;              // ALU result (also the load/store address)
+    wire        is_mmio = (alu_y[31:28] == 4'h1);   // I/O space: 0x1xxxxxxx
     wire [31:0] instr;
-    imem #(.WORDS(MEM_WORDS), .FILE(PROGRAM)) u_imem (.addr(pc), .instr(instr));
+    imem #(.WORDS(MEM_WORDS), .FILE(PROGRAM)) u_imem (.clk(clk), .addr(rst ? 32'd0 : pc_next_eff), .instr(instr));
 
     // ---------- Decode ----------
     wire [6:0] opcode = instr[6:0];
@@ -42,7 +46,15 @@ module cpu #(
                   (opcode == OP_JALR)|| (opcode == OP_LUI)  ||
                   (opcode == OP_AUIPC);
 
-    regfile u_rf (.clk(clk), .we(reg_we & ~rst), .rs1(rs1), .rs2(rs2),
+    // Loads from data memory take 2 cycles: the block RAM returns data one
+    // clock after it sees the address. In the first cycle we stall (hold the
+    // PC, skip write-back); in the second, load_wait is set and data is ready.
+    wire is_dmem_load = (opcode == OP_LOAD) && !is_mmio;
+    reg  load_wait;
+    wire stall = is_dmem_load && !load_wait;
+    always @(posedge clk) load_wait <= rst ? 1'b0 : stall;
+
+    regfile u_rf (.clk(clk), .we(reg_we & ~stall & ~rst), .rs1(rs1), .rs2(rs2),
                   .rd(rd), .wd(wb_val), .rd1(rs1_val), .rd2(rs2_val));
 
     // ---------- ALU control ----------
@@ -65,12 +77,10 @@ module cpu #(
     end
 
     wire [31:0] alu_b = (opcode == OP_R) ? rs2_val : imm;
-    wire [31:0] alu_y;
     wire        alu_zero;
     alu u_alu (.a(rs1_val), .b(alu_b), .op(alu_op), .result(alu_y), .zero(alu_zero));
 
     // ---------- Memory ----------
-    wire        is_mmio = (alu_y[31:28] == 4'h1);
     wire [31:0] dmem_val;
     dmem #(.WORDS(MEM_WORDS), .FILE(DATA_FILE)) u_dmem (
         .clk(clk), .we((opcode == OP_STORE) & ~is_mmio & ~rst), .funct3(funct3),
@@ -99,7 +109,6 @@ module cpu #(
     // ---------- Next PC ----------
     wire [31:0] pc_plus4  = pc + 32'd4;
     wire [31:0] pc_target = pc + imm;
-    reg  [31:0] next_pc;
     always @(*) begin
         case (opcode)
             OP_JAL:    next_pc = pc_target;
@@ -120,8 +129,10 @@ module cpu #(
         endcase
     end
 
+    assign pc_next_eff = stall ? pc : next_pc;
+
     always @(posedge clk) begin
         if (rst) pc <= 32'd0;
-        else     pc <= next_pc;
+        else     pc <= pc_next_eff;
     end
 endmodule

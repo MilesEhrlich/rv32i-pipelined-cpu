@@ -40,6 +40,7 @@ module c_tb;
                     else                 $display("C TEST FAILED");
                     $finish;
                 end
+                32'h1000000C: ;   // LEDs: nothing to show in simulation
                 default: $display("warning: store to unmapped I/O address %h", mmio_addr);
             endcase
         end

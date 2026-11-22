@@ -74,17 +74,17 @@ module parts_tb;
         alu_check("or",   8, 32'hF0F0F0F0, 32'h0F0F0F0F, 32'hFFFFFFFF);
         alu_check("and",  9, 32'hF0F0F0F0, 32'hFF00FF00, 32'hF000F000);
 
-        // Data memory
+        // Data memory (synchronous: writes and reads happen on the rising edge)
         dm_addr = 0; dm_wd = 32'h11223344; dm_f3 = 3'b010; dm_we = 1;
         @(posedge clk); #1; dm_we = 0;
-        dm_addr = 1; dm_f3 = 3'b000; #1; expect32("lb",  dm_rd, 32'h00000033);
-        dm_addr = 3; dm_f3 = 3'b100; #1; expect32("lbu", dm_rd, 32'h00000011);
+        dm_addr = 1; dm_f3 = 3'b000; @(posedge clk); #1; expect32("lb",  dm_rd, 32'h00000033);
+        dm_addr = 3; dm_f3 = 3'b100; @(posedge clk); #1; expect32("lbu", dm_rd, 32'h00000011);
 
         dm_addr = 2; dm_wd = 32'h80; dm_f3 = 3'b000; dm_we = 1;   // sb
         @(posedge clk); #1; dm_we = 0;
-        dm_addr = 2; dm_f3 = 3'b000; #1; expect32("lb neg", dm_rd, 32'hFFFFFF80);
-        dm_addr = 0; dm_f3 = 3'b010; #1; expect32("lw",     dm_rd, 32'h11803344);
-        dm_addr = 2; dm_f3 = 3'b001; #1; expect32("lh",     dm_rd, 32'h00001180);
+        dm_addr = 2; dm_f3 = 3'b000; @(posedge clk); #1; expect32("lb neg", dm_rd, 32'hFFFFFF80);
+        dm_addr = 0; dm_f3 = 3'b010; @(posedge clk); #1; expect32("lw",     dm_rd, 32'h11803344);
+        dm_addr = 2; dm_f3 = 3'b001; @(posedge clk); #1; expect32("lh",     dm_rd, 32'h00001180);
 
         if (errors == 0) $display("All parts tests passed");
         else             $display("%0d errors", errors);

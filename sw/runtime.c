@@ -4,7 +4,14 @@
 #include <stddef.h>
 #include "mmio.h"
 
-void putchar_(char c) { MMIO_PUTCHAR = (uint8_t)c; }
+void putchar_(char c) {
+    while (MMIO_UART_ST & 1) ;          // wait until the UART can take a byte
+    MMIO_PUTCHAR = (uint8_t)c;
+}
+void delay_cycles(uint32_t n) {
+    uint32_t t0 = MMIO_CYCLES;
+    while (MMIO_CYCLES - t0 < n) ;
+}
 void puts_(const char *s) { while (*s) putchar_(*s++); }
 
 void print_uint(uint32_t v) {
