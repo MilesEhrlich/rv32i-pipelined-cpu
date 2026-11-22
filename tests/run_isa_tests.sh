@@ -5,6 +5,7 @@
 #   CORE=single ./tests/run_isa_tests.sh -> single-cycle core
 # Fetch the test sources once with:  git submodule update --init tests/upstream
 DEFS=""; [ "$CORE" = single ] && DEFS="-DSINGLE_CYCLE"
+[ -n "$BP" ] && DEFS="$DEFS -DBP_DEFAULT=$BP"          # BP=1: branch prediction
 cd "$(dirname "$0")/.."
 LLVM=/opt/homebrew/opt/llvm/bin
 LLD=/opt/homebrew/opt/lld/bin

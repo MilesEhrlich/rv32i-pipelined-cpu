@@ -7,6 +7,7 @@
 set -e
 PROG=${1:-hello}
 DEFS=""; [ "$CORE" = single ] && DEFS="-DSINGLE_CYCLE"
+[ -n "$BP" ] && DEFS="$DEFS -DBP_DEFAULT=$BP"          # BP=1: branch prediction
 cd "$(dirname "$0")"
 mkdir -p build
 make -s -C sw PROG="$PROG"

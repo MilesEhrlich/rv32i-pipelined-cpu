@@ -5,11 +5,13 @@
 #   NOLOAD=1 ./build_soc.sh   -> build + reports only, don't touch the board
 #   CORE=single ./build_soc.sh -> single-cycle core instead of the pipeline
 #   SEED=n ./build_soc.sh       -> place-and-route seed (results vary slightly)
+#   BP=1 ./build_soc.sh         -> pipeline with branch prediction
 # Reports land in reports/ (yosys.log, nextpnr.log); a summary is printed.
 set -e
 PROG=${1:-board}
 DEFS=""; FREQ=40.5
 [ "$CORE" = single ] && { DEFS="-DSINGLE_CYCLE"; FREQ=27; SEED=${SEED:-5}; }  # single-cycle is at the edge of 27 MHz; seed 5 passes
+[ -n "$BP" ] && DEFS="$DEFS -DBP_DEFAULT=$BP"              # BP=1: pipeline with branch prediction
 cd "$(dirname "$0")"
 mkdir -p reports build
 RTL="rtl/top.v rtl/uart_tx.v rtl/cpu.v rtl/cpu_pipe.v rtl/cpu_core.v rtl/bram_be.v rtl/regfile.v rtl/imm_gen.v rtl/alu.v rtl/dmem.v rtl/imem.v"

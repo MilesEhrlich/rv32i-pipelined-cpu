@@ -24,6 +24,8 @@ muldiv    ok  cycles 194254  instr 180327  CPI 1.077  time 4796 us
   `rv32ui` suite, on both cores.
 - **5-stage pipeline** with forwarding, a load-use stall, and branch flushing.
   It runs **1.40–1.57× faster** than the single-cycle core on hardware benchmarks.
+  An optional **branch target buffer** (2-bit counters) takes sort to 1.71×
+  and CPI 1.005 at the same clock.
 - **Runs real C**: clang/LLVM toolchain, startup code, linker script, and a small
   runtime with software multiply/divide (RV32I has no `mul`).
 - **Measured on hardware**: cycle and instructions-retired counters are readable
@@ -40,15 +42,14 @@ muldiv    ok  cycles 194254  instr 180327  CPI 1.077  time 4796 us
 
 ## Results
 
-| | Single-cycle | 5-stage pipeline |
-|---|---|---|
-| Clock on board | 27 MHz | 40.5 MHz (PLL) |
-| Fmax (nextpnr, 6 seeds) | 26.3 – 27.1 MHz | 44.3 – 45.4 MHz |
-| Logic (LUT4) | 3040 (35%) | 2859 (33%) |
-| Flip-flops | 362 | 613 |
-| fib(20) | 11 197 µs | 7 130 µs (1.57×) |
-| insertion sort, 200 ints | 3 261 µs | 2 169 µs (1.50×) |
-| CRC-32, 1 KB | 1 556 µs | 1 037 µs (1.50×) |
+| | Single-cycle | 5-stage pipeline | + branch prediction |
+|---|---|---|---|
+| Clock on board | 27 MHz | 40.5 MHz (PLL) | 40.5 MHz |
+| Fmax (nextpnr) | 26.3 – 27.1 MHz | 44.3 – 45.4 MHz | 41.8 – 42.8 MHz |
+| Logic (LUT4) | 3040 (35%) | 2859 (33%) | 3177 (36%) |
+| fib(20) | 11 197 µs | 7 130 µs (1.57×) | 7 194 µs (1.56×) |
+| insertion sort, 200 ints | 3 261 µs | 2 169 µs (1.50×) | 1 908 µs (**1.71×**) |
+| CRC-32, 1 KB | 1 556 µs | 1 037 µs (1.50×) | 1 012 µs (1.54×) |
 
 Full breakdown, including CPI per benchmark and how the pipeline's clock went
 from 27.6 MHz to 44 MHz: **[RESULTS.md](RESULTS.md)**.
@@ -119,8 +120,12 @@ flowchart LR
   are computed in ID and registered, so the register-number comparators stay
   off the critical path. A load directly followed by a user of its result
   stalls 1 cycle.
-- **Control hazards:** branches are predicted not-taken and resolved in EX. A
-  taken branch or jump costs 1 cycle.
+- **Control hazards:** branches are resolved in EX. By default they are
+  predicted not-taken, so a taken branch or jump costs 1 cycle. With `BP=1`, a
+  16-entry branch target buffer with 2-bit counters predicts branches and
+  `jal` in the same cycle the next PC is chosen: a correct prediction costs
+  nothing, a wrong one 1 cycle. Sort runs 12% faster (CPI 1.005), and it still
+  meets 40.5 MHz. Measurements in [RESULTS.md](RESULTS.md).
 - **Memories:** synchronous block RAM. The instruction RAM is addressed with the
   *next* PC, so its output register is the IF/ID register. The data RAM is
   addressed in EX and its output is read in MEM.
@@ -219,5 +224,6 @@ Bugs that passed simulation but failed on the FPGA:
 - Protect what hardening leaves exposed: the pipeline registers and the
   code (ECC on the memories)
 - Close timing at the slow ASIC corner; add SRAM macros for a full chip
-- Branch prediction (resolve `jal` in ID, a small BTB) to cut the taken-branch penalty
+- A return address stack, so `jalr` returns are predicted too (fib still
+  pays for them)
 - Instruction and data caches, with memory in the board's PSRAM

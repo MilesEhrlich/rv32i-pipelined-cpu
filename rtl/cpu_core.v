@@ -15,9 +15,19 @@
 //            MEM also works and needs no stall, but puts block RAM -> byte
 //            extract -> forward -> branch -> fetch in one cycle: 28.7 MHz.)
 //            Forwarding selects are computed in ID and registered.
-//   control  predict not-taken; a taken branch/jump is resolved in EX and
-//            redirects fetch in the same cycle, squashing the 1 instruction
-//            behind it (1-cycle penalty)
+//   control  BP=0: predict not-taken; a taken branch/jump is resolved in EX
+//            and redirects fetch in the same cycle, squashing the 1
+//            instruction behind it (1-cycle penalty).
+//            BP=1: a branch target buffer (2^BTB_BITS entries, 2-bit
+//            counters) is looked up with the PC of the instruction in ID,
+//            which is exactly when the next fetch address is chosen, so a
+//            predicted-taken branch or jal fetches its target next with no
+//            penalty. EX checks the prediction and redirects only when it was
+//            wrong (still 1 cycle). jalr is not predicted (its target would
+//            need a 32-bit compare on the EX redirect path). Entries cover
+//            code below 16 KB and carry the full PC, and instruction memory
+//            is read-only, so a hit always describes the same instruction
+//            and a predicted jal target is always right.
 //
 // PARITY=1 adds a parity bit to every register (see regfile.v). rf_err
 // pulses when an instruction in EX used a register value whose parity was
@@ -28,7 +38,10 @@
 // Memories are outside the core (cpu_pipe.v wraps it with FPGA block RAM;
 // an ASIC build connects SRAM macros). Both ports expect a SYNCHRONOUS
 // memory: data is returned the cycle after the address is presented.
-module cpu_core #(parameter PARITY = 0) (
+`ifndef BP_DEFAULT
+`define BP_DEFAULT 0          // iverilog/yosys -DBP_DEFAULT=1 turns prediction on everywhere
+`endif
+module cpu_core #(parameter PARITY = 0, parameter BP = `BP_DEFAULT, parameter BTB_BITS = 4) (
     input  wire        clk,
     input  wire        rst,
     // instruction memory
@@ -90,9 +103,14 @@ module cpu_core #(parameter PARITY = 0) (
     // =====================================================================
     reg  [31:0] pc_D;
     wire [31:0] instr_D = imem_rdata;
+    wire        pred_D;                               // BP: instruction in ID predicted taken
+    wire [31:0] pred_target_D;
+    wire        pred_hit_D;
+    wire [1:0]  pred_ctr_D;
     wire [31:0] fetch_pc = rst      ? 32'd0 :
                            redirect ? redirect_pc :
                            stall    ? pc_D :          // re-fetch: hold ID
+                           pred_D   ? pred_target_D :
                                       pc_D + 32'd4;
     assign imem_addr = fetch_pc;
 `ifdef FI_PORTS
@@ -167,6 +185,8 @@ module cpu_core #(parameter PARITY = 0) (
     reg [31:0] ex_pc, ex_imm, ex_rs1_val, ex_rs2_val;
     reg        ex_fm1, ex_fw1, ex_fm2, ex_fw2;   // forwarding selects, decided in ID
     reg        ex_perr;                          // used a register with bad parity
+    reg        ex_pred, ex_hit;                  // BP: predicted taken / BTB hit in ID
+    reg [1:0]  ex_ctr;                           // BP: counter read in ID
 
     // Load-use hazard: a load's data is not forwardable until it reaches WB
     assign stall = ex_valid && ex_load && ex_rd != 0 &&
@@ -200,6 +220,7 @@ module cpu_core #(parameter PARITY = 0) (
         ex_fm1 <= uses_rs1 && fm1_D;  ex_fw1 <= uses_rs1 && fw1_D;
         ex_fm2 <= uses_rs2 && fm2_D;  ex_fw2 <= uses_rs2 && fw2_D;
         ex_perr <= perr_D;
+        ex_pred <= pred_D; ex_hit <= pred_hit_D; ex_ctr <= pred_ctr_D;
     end
     assign rf_err = ex_valid && ex_perr;       // bubbles never report
 `ifdef FI_PORTS
@@ -240,10 +261,49 @@ module cpu_core #(parameter PARITY = 0) (
     // pc_target = pc + imm (branch and jal target).
     wire [31:0] ea        = rs1_fwd + ex_imm;
     wire [31:0] pc_target = ex_pc + ex_imm;
-    assign redirect    = ex_valid && (ex_jal || ex_jalr || (ex_br && take));
-    assign redirect_pc = ex_jalr ? {ea[31:1], 1'b0} : pc_target;
+    // Redirect when the fetch that followed this instruction was wrong.
+    // BP=0: ex_pred is 0 and this is "any taken branch or jump".
+    wire pred_ex = BP ? ex_pred : 1'b0;
+    wire [31:0] pc_plus4 = ex_pc + 32'd4;
+    assign redirect    = ex_valid && (ex_jalr || (ex_jal && !pred_ex) || (ex_br && take != pred_ex));
+    assign redirect_pc = ex_jalr ? {ea[31:1], 1'b0} :
+                         (BP && ex_br && !take) ? pc_plus4 : pc_target;
 
-    wire [31:0] ex_result = (ex_jal || ex_jalr) ? ex_pc + 32'd4 : alu_y;
+    // ---- branch target buffer (BP=1) ----
+    generate if (BP) begin : g_bp
+        localparam N = 1 << BTB_BITS, TW = 12 - BTB_BITS;    // tag = pc[13:2+BTB_BITS]
+        reg [N-1:0]   valid;
+        reg [TW-1:0]  tag [0:N-1];
+        reg [11:0]    tgt [0:N-1];                            // target[13:2]
+        reg [1:0]     ctr [0:N-1];
+        wire [BTB_BITS-1:0] ri = pc_D[BTB_BITS+1:2];
+        assign pred_hit_D    = valid[ri] && tag[ri] == pc_D[13:2+BTB_BITS] && pc_D[31:14] == 0;
+        assign pred_ctr_D    = ctr[ri];
+        assign pred_D        = pred_hit_D && ctr[ri][1];
+        assign pred_target_D = {18'd0, tgt[ri], 2'b00};
+        // update from EX: jal always; branches when already present or taken
+        wire [BTB_BITS-1:0] wi = ex_pc[BTB_BITS+1:2];
+        wire upd = ex_valid && ex_pc[31:14] == 0 && pc_target[31:14] == 0 &&
+                   (ex_jal || (ex_br && (ex_hit || take)));
+        wire [1:0] nctr = ex_jal  ? 2'b11 :
+                          !ex_hit ? 2'b10 :                    // new taken branch: weakly taken
+                          take    ? (ex_ctr == 2'b11 ? 2'b11 : ex_ctr + 2'b01) :
+                                    (ex_ctr == 2'b00 ? 2'b00 : ex_ctr - 2'b01);
+        always @(posedge clk) begin
+            if (rst)      valid <= 0;
+            else if (upd) valid[wi] <= 1'b1;
+            if (upd) begin
+                tag[wi] <= ex_pc[13:2+BTB_BITS];
+                tgt[wi] <= pc_target[13:2];
+                ctr[wi] <= nctr;
+            end
+        end
+    end else begin : g_nobp
+        assign pred_D = 1'b0; assign pred_hit_D = 1'b0;
+        assign pred_ctr_D = 2'b00; assign pred_target_D = 32'd0;
+    end endgenerate
+
+    wire [31:0] ex_result = (ex_jal || ex_jalr) ? pc_plus4 : alu_y;
     wire        ex_mmio   = (ea[31:28] == 4'h1);
 
     // Data memory: address/data presented in EX, the memory registers them.

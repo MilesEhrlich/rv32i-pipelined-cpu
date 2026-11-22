@@ -158,7 +158,7 @@ trial in the Verilator simulation** (same image, bit and cycle).
   outcome, same class and score checksum.
 - All 20 000 fault-free runs on the board give the Python model's exact class
   and checksum, in the exact cycle count the simulation predicts.
-- **Parity works in silicon:** 0 silent wrong answers and 0 crashes from
+- **Parity works on the FPGA:** 0 silent wrong answers and 0 crashes from
   register flips on the hardened board.
 - The board's rates match the simulated campaign within sampling error
   (register file SDC 4.0% on the board vs 3.7% simulated).

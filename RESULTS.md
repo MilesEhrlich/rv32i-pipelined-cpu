@@ -43,6 +43,41 @@ Where the extra cycles come from:
   result stalls 1 cycle. The mul/div benchmark spends its time in tight
   shift-and-add loops, so taken branches dominate there.
 
+## Branch prediction (`BP=1`)
+
+A 16-entry branch target buffer with 2-bit counters, looked up with the PC of
+the instruction in ID: that is the cycle in which the next fetch address is
+chosen, so a correctly predicted taken branch or `jal` costs nothing instead
+of 1 cycle. `jalr` is not predicted. Off by default (`BP=1 ./build_soc.sh`,
+`BP=1 ./run_c.sh`, and `run_tests.sh` covers both), so the ASIC and fault
+study keep describing the core they measured.
+
+| Benchmark (board, 40.5 MHz) | Pipeline | + branch prediction | Change |
+|---|---|---|---|
+| fib(20), recursive | 288 797 cycles, 7 130 µs | 291 381 cycles, 7 194 µs | **+0.9%** |
+| insertion sort, 200 ints | 87 869 cycles, 2 169 µs | 77 297 cycles, 1 908 µs | **−12.0%** |
+| CRC-32, 1 KB | 42 017 cycles, 1 037 µs | 40 996 cycles, 1 012 µs | **−2.4%** |
+| software mul/div | 194 254 cycles, 4 796 µs | 181 920 cycles, 4 491 µs | **−6.4%** |
+| int8 neural network, per image (sim) | 65 105 cycles | 61 493 cycles | **−5.5%** |
+
+| | Pipeline | + branch prediction |
+|---|---|---|
+| Fmax, seeds 1–3 | 43.0 – 43.8 MHz | 41.8 – 42.8 MHz |
+| LUT4 | 2671 | 3177 (+506) |
+| Flip-flops | – | 669 |
+
+- Sort, CRC and mul/div now run at CPI 1.005, 0.999 and 1.008: almost every
+  remaining bubble is a load-use stall or a `jalr`.
+- **fib gets slightly worse.** Its returns are `jalr` (not predicted), and
+  its `n < 2` branch changes direction in a pattern a 2-bit counter keeps
+  mispredicting, where static not-taken was right more often. A return
+  address stack would fix the first part.
+- BTB size makes no difference here: 8 to 64 entries give the same cycles
+  (except muldiv, +0.2% with 8), so 16 is enough for these loops.
+- It still meets 40.5 MHz on every seed (about 3% lower Fmax), so on the
+  board the cycles saved are time saved.
+- Cycle counts on the board match simulation exactly, as for the other cores.
+
 ## What limited the clock, and what fixed it (pipeline)
 
 | Step | Fmax |
