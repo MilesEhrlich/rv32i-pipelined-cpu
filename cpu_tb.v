@@ -4,7 +4,7 @@ module cpu_tb;
     always #5 clk = ~clk;
     integer errors = 0;
 
-    cpu dut (.clk(clk), .rst(rst));
+    cpu dut (.clk(clk), .rst(rst), .mmio_rdata(32'd0));
 
     task check_reg(input [4:0] r, input [31:0] want);
         if (dut.u_rf.regs[r] !== want) begin

@@ -1,11 +1,21 @@
-module cpu (
-    input wire clk,
-    input wire rst
+module cpu #(
+    parameter PROGRAM   = "program.hex",  // loaded into instruction memory
+    parameter DATA_FILE = "",             // optional preload of data memory
+    parameter MEM_WORDS = 2048            // 8 KB each for imem and dmem
+) (
+    input  wire        clk,
+    input  wire        rst,
+    // Memory-mapped I/O bus: any access with addr[31:28] == 4'h1
+    output wire        mmio_we,      // store to an I/O address this cycle
+    output wire        mmio_re,      // load from an I/O address this cycle
+    output wire [31:0] mmio_addr,
+    output wire [31:0] mmio_wdata,
+    input  wire [31:0] mmio_rdata
 );
     // ---------- Fetch ----------
     reg  [31:0] pc;
     wire [31:0] instr;
-    imem #(.FILE("program.hex")) u_imem (.addr(pc), .instr(instr));
+    imem #(.WORDS(MEM_WORDS), .FILE(PROGRAM)) u_imem (.addr(pc), .instr(instr));
 
     // ---------- Decode ----------
     wire [6:0] opcode = instr[6:0];
@@ -60,9 +70,17 @@ module cpu (
     alu u_alu (.a(rs1_val), .b(alu_b), .op(alu_op), .result(alu_y), .zero(alu_zero));
 
     // ---------- Memory ----------
-    wire [31:0] load_val;
-    dmem u_dmem (.clk(clk), .we((opcode == OP_STORE) & ~rst), .funct3(funct3),
-                 .addr(alu_y), .wd(rs2_val), .rd(load_val));
+    wire        is_mmio = (alu_y[31:28] == 4'h1);
+    wire [31:0] dmem_val;
+    dmem #(.WORDS(MEM_WORDS), .FILE(DATA_FILE)) u_dmem (
+        .clk(clk), .we((opcode == OP_STORE) & ~is_mmio & ~rst), .funct3(funct3),
+        .addr(alu_y), .wd(rs2_val), .rd(dmem_val));
+
+    assign mmio_we    = (opcode == OP_STORE) & is_mmio & ~rst;
+    assign mmio_re    = (opcode == OP_LOAD)  & is_mmio & ~rst;
+    assign mmio_addr  = alu_y;
+    assign mmio_wdata = rs2_val;
+    wire [31:0] load_val = is_mmio ? mmio_rdata : dmem_val;
 
     // ---------- Branches ----------
     reg take_branch;

@@ -2,3 +2,5 @@
 *.fs
 *.vcd
 sim
+sim_c
+sw/build/
