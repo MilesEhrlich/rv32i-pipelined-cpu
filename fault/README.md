@@ -49,23 +49,24 @@ Full table with 95% confidence intervals: [results/summary.md](results/summary.m
 
 ### 1. Control state crashes; data state lies
 
-Flips in the **program counter** crash or hang the program 66% of the time
-and almost never produce a wrong answer (0.9%). Flips in **data** (biases,
+Flips in the **program counter** crash or hang the program 67% of the time
+and almost never produce a wrong answer (1.0%). Flips in **data** (biases,
 the register file, code) are the ones that produce *silent* wrong answers:
-biases 15.7%, code 10.9%, registers 6.6%. Crashes are detectable; silent
+biases 15.7%, code 10.6%, registers 3.7%. Crashes are detectable; silent
 errors are the dangerous kind, and they come from different places.
 
 ### 2. Most of the register file doesn't matter
 
 ![Register file by register](figures/regfile_by_register.png)
 
-Vulnerability is set by how the compiler uses each register. `s4`–`s11`
-are never used by this program, so flipping them is always harmless. `ra`
+Vulnerability is set by how the compiler uses each register. Every saved
+register except `s3` goes unused while the network runs, so flipping them is
+always harmless. `ra`
 (return address), `s3` (holds the I/O base address used to report the result)
 and the loop counters and bounds (`a2`, `t0` count, `a7` holds the bound 32)
 almost always crash or lose the output: a flipped counter sends a loop
 thousands of iterations off course.
-The accumulator and operand registers (`a0`, `a1`, `a4`, `a6`) are where
+The accumulator and operand registers (`a0`, `a1`, `a3`, `a4`, `a6`) are where
 silent wrong answers come from. A register's vulnerability is a property of
 the software, not the hardware.
 
@@ -111,9 +112,9 @@ Same 11 structures, 3 000 trials each, same seeds:
 
 ![Baseline vs hardened](figures/hardening.png)
 
-- **Silent wrong answers fell from 4.2% to 1.8%** of all 33 000 flips;
-  crashes fell from 9.8% to 8.1%.
-- **Register file: 6.6% SDC and 15.8% crash became 0% and 0%.** Every
+- **Silent wrong answers fell from 4.0% to 1.8%** of all 33 000 flips;
+  crashes fell from 9.9% to 8.2%.
+- **Register file: 3.7% SDC and 16.0% crash became 0% and 0%.** Every
   harmful flip is now caught (46% of flips are detected; the rest are masked).
 - **Weights and biases: every flip is detected** (100%, the checksum
   guarantees it for single-bit flips).
@@ -134,6 +135,54 @@ one empty `asm` statement that hides the pointer from the optimizer. An
 integrity check is only as good as the evidence that it reads what it
 claims to protect, and fault injection is that evidence.
 
+## On the real board
+
+The simulation results above come from a model of the CPU. To check them on
+hardware, [`rtl/fi_top.v`](../rtl/fi_top.v) wraps the same core on the
+Tang Nano 9K with a trial controller that needs no PC involvement. Each trial
+it restores memory, does a fault-free run, flips one random bit (register file,
+parity bit, or PC) at a random cycle of a second run, and sends a 37-byte
+report over USB. The injection hooks exist only in this build (`FI_PORTS`);
+the core used everywhere else is unchanged.
+[`board_fi.py`](board_fi.py) collects the reports and **replays every board
+trial in the Verilator simulation** (same image, bit and cycle).
+
+| Build | Target | Board trials | Masked | Tolerated | SDC | Crash | Detected |
+|---|---|---|---|---|---|---|---|
+| baseline | register file | 5 000 | 68.8% | 11.1% | 4.0% | 16.2% | – |
+| baseline | PC | 5 000 | 26.4% | 7.8% | 1.3% | 64.6% | – |
+| hardened | register file | 5 000 | 54.4% | 0.0% | **0.0%** | **0.0%** | 45.6% |
+| hardened | PC | 5 000 | 25.5% | 7.6% | 0.6% | 64.9% | 1.3% |
+
+- **All 20 000 board trials agree with simulation, one by one:** same
+  outcome, same class and score checksum.
+- All 20 000 fault-free runs on the board give the Python model's exact class
+  and checksum, in the exact cycle count the simulation predicts.
+- **Parity works in silicon:** 0 silent wrong answers and 0 crashes from
+  register flips on the hardened board.
+- The board's rates match the simulated campaign within sampling error
+  (register file SDC 4.0% on the board vs 3.7% simulated).
+- Cost of parity on the FPGA: 6 more LUT-RAM blocks; no measurable change in
+  LUTs or maximum clock (42 MHz either way, run at 27 MHz).
+
+**Two simulator bugs the board found.** The first board run agreed with the
+simulation on 94% of trials. Running the disagreeing trials through a third
+model (Icarus Verilog on the real `fi_top.v`) showed the board was right
+both times:
+
+1. *Memory aliasing.* A flipped high bit in a pointer register (e.g.
+   `0x21fc` → `0x010021fc`) still reads the right data on hardware, because
+   the block RAMs only decode the low 14 address bits. My C++ memory model
+   returned 0 past 16 KB, so it counted those flips as harmful. This had
+   inflated the simulated register-file SDC rate from 3.7% to 6.6%.
+2. *State leaking between trials.* When a simulated trial crashed with a
+   store still in the pipeline, the next trial's reset let that store land in
+   the freshly loaded memory. The board restores memory long after reset and
+   never had the problem.
+
+Both are fixed and every campaign above was rerun. Without the hardware, both
+would have stayed hidden: the simulator agreed with itself.
+
 ## Is the injector right?
 
 - **Fault-free runs** match the Python model on all 100 images (class and a
@@ -150,8 +199,9 @@ claims to protect, and fault injection is that evidence.
 ## Limits
 
 - One small model and one program; vulnerability depends on both.
-- RTL simulation, not physical faults. Flip-flops are flipped directly; the
-  memories are modeled in C++.
+- Injected faults, not physical ones (radiation, voltage glitches). The
+  board runs confirm the simulated effects on real hardware for the register
+  file and PC; the memories and pipeline registers are simulated only.
 - Single-bit, uniformly random faults. Real soft errors can hit several bits,
   and attacks choose their bits (the exhaustive sweep covers the chosen-bit
   case for weights).
@@ -166,6 +216,9 @@ python3 -m venv ~/.venvs/rv32i-ml && ~/.venvs/rv32i-ml/bin/pip install numpy sci
 fault/build.sh                                      # Verilator build + sw/digits.c
 ~/.venvs/rv32i-ml/bin/python fault/campaign.py      # 33 000 trials, ~2 minutes on 6 cores
 ~/.venvs/rv32i-ml/bin/python fault/analyze.py       # cross-check, sweep, figures, summary
+# board (Tang Nano 9K plugged in): build, load, collect, replay in simulation
+NOLOAD=1 fault/build_board.sh base && ~/.venvs/rv32i-ml/bin/python fault/board_fi.py base --load
+NOLOAD=1 fault/build_board.sh hard && ~/.venvs/rv32i-ml/bin/python fault/board_fi.py hard --load
 # hardened build
 ~/.venvs/rv32i-ml/bin/python fault/campaign.py --variant hard
 ~/.venvs/rv32i-ml/bin/python fault/campaign.py --variant b16 --targets biases

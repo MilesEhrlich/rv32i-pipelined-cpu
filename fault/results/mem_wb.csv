@@ -123,7 +123,7 @@ mem_wb,wb_val,12,10,29177,masked,67005
 mem_wb,wb_val,27,11,14948,tolerated,68327
 mem_wb,wb_val,18,75,9128,crash,207069
 mem_wb,wb_val,0,64,29122,masked,74715
-mem_wb,wb_val,19,97,58364,tolerated,66651
+mem_wb,wb_val,19,97,58364,masked,66651
 mem_wb,wb_val,11,94,49420,masked,72451
 mem_wb,wb_val,31,23,23267,tolerated,62495
 mem_wb,wb_we,0,17,10857,masked,61739
@@ -150,7 +150,7 @@ mem_wb,wb_val,29,34,42785,masked,65499
 mem_wb,wb_rd,2,68,34036,masked,66851
 mem_wb,wb_val,6,87,21553,masked,63443
 mem_wb,wb_val,29,39,55552,tolerated,60805
-mem_wb,wb_rd,1,70,50920,tolerated,61275
+mem_wb,wb_rd,1,70,50920,sdc,61279
 mem_wb,wb_val,17,16,42814,sdc,74347
 mem_wb,wb_val,23,22,16162,tolerated,70641
 mem_wb,wb_rd,4,32,56839,tolerated,58157
@@ -268,7 +268,7 @@ mem_wb,wb_val,18,64,12820,masked,74715
 mem_wb,wb_val,0,4,25392,masked,61577
 mem_wb,wb_rd,3,39,13622,masked,60605
 mem_wb,wb_val,17,35,33141,tolerated,65831
-mem_wb,wb_val,23,64,59913,tolerated,74715
+mem_wb,wb_val,23,64,59913,masked,74715
 mem_wb,wb_val,29,95,57962,masked,63917
 mem_wb,wb_val,31,11,20288,tolerated,67857
 mem_wb,wb_val,4,74,51504,masked,68495
@@ -627,7 +627,7 @@ mem_wb,wb_val,10,57,46099,masked,61023
 mem_wb,wb_val,22,94,55296,crash,217353
 mem_wb,wb_rd,0,52,29672,masked,67555
 mem_wb,wb_rd,0,48,35827,masked,64487
-mem_wb,wb_val,15,70,47059,tolerated,61229
+mem_wb,wb_val,15,70,47059,masked,61229
 mem_wb,wb_val,23,62,19155,sdc,64445
 mem_wb,wb_val,24,42,5494,tolerated,61520
 mem_wb,wb_val,26,36,48134,crash,173217
@@ -921,7 +921,7 @@ mem_wb,wb_val,16,87,26568,masked,63443
 mem_wb,wb_val,7,67,13944,tolerated,65215
 mem_wb,wb_we,0,51,44392,masked,62943
 mem_wb,wb_val,4,9,691,masked,67775
-mem_wb,wb_val,20,29,51913,tolerated,59275
+mem_wb,wb_val,20,29,51913,masked,59275
 mem_wb,wb_rd,4,52,54537,sdc,67555
 mem_wb,wb_val,8,40,64096,tolerated,69563
 mem_wb,wb_val,0,83,7779,masked,68755
@@ -1170,7 +1170,7 @@ mem_wb,wb_val,14,88,9603,tolerated,61317
 mem_wb,wb_val,31,79,9322,masked,60589
 mem_wb,wb_val,9,3,17116,masked,69795
 mem_wb,wb_val,0,75,64880,tolerated,69023
-mem_wb,wb_val,27,73,52309,tolerated,68867
+mem_wb,wb_val,27,73,52309,masked,68867
 mem_wb,wb_val,27,16,68951,sdc,74447
 mem_wb,wb_rd,2,19,32261,tolerated,72421
 mem_wb,wb_val,1,50,2109,masked,67141
@@ -1207,7 +1207,7 @@ mem_wb,wb_rd,2,12,11642,masked,66727
 mem_wb,wb_val,29,19,64321,sdc,72423
 mem_wb,wb_val,16,55,7044,masked,61889
 mem_wb,wb_val,9,52,46248,tolerated,67787
-mem_wb,wb_val,17,62,49181,tolerated,64203
+mem_wb,wb_val,17,62,49181,masked,64203
 mem_wb,wb_val,24,60,42169,tolerated,63429
 mem_wb,wb_val,19,15,28047,tolerated,63325
 mem_wb,wb_val,30,19,57211,masked,72653
@@ -1477,7 +1477,7 @@ mem_wb,wb_val,28,86,42799,tolerated,68537
 mem_wb,wb_val,0,8,48613,masked,66675
 mem_wb,wb_val,14,48,34672,masked,64487
 mem_wb,wb_val,9,26,54156,tolerated,58981
-mem_wb,wb_val,26,53,54714,tolerated,62535
+mem_wb,wb_val,26,53,54714,masked,62535
 mem_wb,wb_val,30,93,10845,masked,56335
 mem_wb,wb_rd,4,87,45310,tolerated,108619
 mem_wb,wb_val,14,56,60928,masked,64591
@@ -1575,7 +1575,7 @@ mem_wb,wb_val,20,48,25845,tolerated,63937
 mem_wb,wb_we,0,59,38791,tolerated,69217
 mem_wb,wb_val,24,51,56154,masked,62943
 mem_wb,wb_val,13,26,9569,sdc,59230
-mem_wb,wb_val,27,39,54857,sdc,60607
+mem_wb,wb_val,27,39,54857,masked,60605
 mem_wb,wb_val,13,78,4605,tolerated,63673
 mem_wb,wb_val,7,76,25516,masked,64299
 mem_wb,wb_val,29,95,30001,masked,63917
@@ -1849,7 +1849,7 @@ mem_wb,wb_rd,0,75,11481,masked,69023
 mem_wb,wb_val,12,16,2286,masked,74263
 mem_wb,wb_val,6,4,16324,masked,61577
 mem_wb,wb_rd,1,45,30577,tolerated,49407
-mem_wb,wb_rd,3,0,38468,tolerated,61777
+mem_wb,wb_rd,3,0,38468,sdc,61775
 mem_wb,wb_rd,3,95,8067,masked,63917
 mem_wb,wb_val,3,8,31330,masked,66675
 mem_wb,wb_val,29,91,13853,masked,63315
@@ -2152,7 +2152,7 @@ mem_wb,wb_rd,2,93,27208,masked,56335
 mem_wb,wb_val,6,94,36280,tolerated,72451
 mem_wb,wb_val,7,92,8393,masked,64899
 mem_wb,wb_val,24,12,32224,masked,66727
-mem_wb,wb_val,16,31,55588,tolerated,69615
+mem_wb,wb_val,16,31,55588,masked,69615
 mem_wb,wb_val,25,71,46434,masked,65265
 mem_wb,wb_val,19,26,34495,tolerated,59191
 mem_wb,wb_val,28,84,30244,masked,66649
@@ -2325,7 +2325,7 @@ mem_wb,wb_val,5,83,33205,masked,68755
 mem_wb,wb_rd,1,86,20275,masked,68455
 mem_wb,wb_val,7,57,44809,masked,61023
 mem_wb,wb_val,26,96,2145,masked,70601
-mem_wb,wb_rd,4,19,30599,sdc,69357
+mem_wb,wb_rd,4,19,30599,sdc,69907
 mem_wb,wb_val,8,31,33949,masked,69615
 mem_wb,wb_val,9,9,38025,masked,67775
 mem_wb,wb_val,6,52,49634,masked,67555
@@ -2870,7 +2870,7 @@ mem_wb,wb_we,0,52,67092,tolerated,67563
 mem_wb,wb_val,3,50,30746,masked,67141
 mem_wb,wb_val,9,82,34144,tolerated,61459
 mem_wb,wb_val,7,44,30059,masked,59917
-mem_wb,wb_val,27,39,60228,tolerated,60605
+mem_wb,wb_val,27,39,60228,masked,60605
 mem_wb,wb_val,8,80,55985,masked,69915
 mem_wb,wb_val,30,20,38477,tolerated,64565
 mem_wb,wb_rd,2,9,18236,masked,67775
@@ -2882,7 +2882,7 @@ mem_wb,wb_val,3,98,14817,masked,62763
 mem_wb,wb_val,28,83,46676,tolerated,69389
 mem_wb,wb_val,20,32,7885,masked,58149
 mem_wb,wb_rd,4,98,62440,masked,62763
-mem_wb,wb_val,26,74,59215,tolerated,68495
+mem_wb,wb_val,26,74,59215,masked,68495
 mem_wb,wb_val,7,30,50722,masked,74847
 mem_wb,wb_rd,3,94,14041,masked,72451
 mem_wb,wb_val,25,28,5414,masked,65765

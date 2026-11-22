@@ -49,6 +49,21 @@ module cpu_core #(parameter PARITY = 0) (
     output reg         retire,        // 1 for each instruction completing WB
     output wire [31:0] pc,            // PC of the instruction in ID (debug)
     output wire        rf_err         // register-file parity error (PARITY=1)
+`ifdef FI_PORTS
+    ,
+    // Board fault injection (rtl/fi_top.v only; absent from every other build).
+    // Each flip happens at the clock edge ending the cycle it is asserted in.
+    input  wire        fi_pc_flip,    // pc_D ^= fi_mask
+    input  wire        fi_rf_flip,    // x[fi_reg] ^= fi_mask; only while dbg_rf_we = 0
+    input  wire        fi_par_flip,   // parity bit of x[fi_reg] ^= 1
+    input  wire        fi_rf_clr,     // x[fi_reg] = 0 (between trials, in reset)
+    input  wire [4:0]  fi_reg,
+    input  wire [31:0] fi_mask,
+    output wire        dbg_ex_valid,
+    output wire [31:0] dbg_ex_pc,
+    output wire        dbg_rf_we,     // the register file is written this cycle
+    output wire        dbg_fi_ready   // a register/parity flip may fire this cycle
+`endif
 );
     localparam OP_R      = 7'b0110011, OP_I     = 7'b0010011,
                OP_LOAD   = 7'b0000011, OP_STORE = 7'b0100011,
@@ -80,7 +95,11 @@ module cpu_core #(parameter PARITY = 0) (
                            stall    ? pc_D :          // re-fetch: hold ID
                                       pc_D + 32'd4;
     assign imem_addr = fetch_pc;
+`ifdef FI_PORTS
+    always @(posedge clk) pc_D <= fetch_pc ^ (fi_pc_flip ? fi_mask : 32'd0);
+`else
     always @(posedge clk) pc_D <= fetch_pc;
+`endif
     assign pc = pc_D;
 
     // =====================================================================
@@ -127,7 +146,12 @@ module cpu_core #(parameter PARITY = 0) (
     wire        rf_perr1, rf_perr2;
     regfile #(.PARITY(PARITY)) u_rf (.clk(clk), .we(wb_we), .rs1(rs1_D), .rs2(rs2_D),
                   .rd(wb_rd), .wd(wb_val), .rd1(rf1), .rd2(rf2),
-                  .perr1(rf_perr1), .perr2(rf_perr2));
+                  .perr1(rf_perr1), .perr2(rf_perr2)
+`ifdef FI_PORTS
+                  , .fi_clr(fi_rf_clr), .fi_flip(fi_rf_flip), .fi_par_flip(fi_par_flip),
+                  .fi_reg(fi_reg), .fi_mask(fi_mask), .fi_ready(dbg_fi_ready)
+`endif
+                  );
     // WB -> ID bypass: a register written this cycle is read in the same cycle
     wire byp1_D = wb_we && wb_rd != 0 && wb_rd == rs1_D;
     wire byp2_D = wb_we && wb_rd != 0 && wb_rd == rs2_D;
@@ -178,6 +202,11 @@ module cpu_core #(parameter PARITY = 0) (
         ex_perr <= perr_D;
     end
     assign rf_err = ex_valid && ex_perr;       // bubbles never report
+`ifdef FI_PORTS
+    assign dbg_rf_we = wb_we && wb_rd != 0;
+    assign dbg_ex_valid = ex_valid;
+    assign dbg_ex_pc    = ex_pc;
+`endif
 
     // =====================================================================
     // EX

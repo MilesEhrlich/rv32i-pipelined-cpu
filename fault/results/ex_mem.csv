@@ -1,6 +1,6 @@
 target,site,bit,image,cycle,outcome,cycles_run
 ex_mem,mem_f3,0,98,9004,masked,62763
-ex_mem,mem_result,20,98,32454,tolerated,62822
+ex_mem,mem_result,20,98,32454,masked,62763
 ex_mem,mem_wdata,22,82,681,masked,61233
 ex_mem,mem_f3,1,92,3151,masked,64899
 ex_mem,mem_wdata,16,33,58718,masked,67505
@@ -89,7 +89,7 @@ ex_mem,mem_wdata,29,16,44507,masked,74263
 ex_mem,mem_rd,2,19,20198,masked,72421
 ex_mem,mem_result,13,79,33316,masked,60589
 ex_mem,mem_mmio,0,12,51919,masked,66727
-ex_mem,mem_load,0,2,39648,masked,66407
+ex_mem,mem_load,0,2,39648,tolerated,66407
 ex_mem,mem_result,19,78,13573,masked,63511
 ex_mem,mem_wdata,25,12,25859,masked,66727
 ex_mem,mem_result,7,82,51916,masked,61233
@@ -198,7 +198,7 @@ ex_mem,mem_wdata,19,7,13678,masked,67351
 ex_mem,mem_result,7,79,52692,masked,60589
 ex_mem,mem_wdata,8,47,58169,masked,63303
 ex_mem,mem_result,8,20,48918,tolerated,64401
-ex_mem,mem_result,20,96,16695,tolerated,70601
+ex_mem,mem_result,20,96,16695,masked,70601
 ex_mem,mem_wdata,17,34,14448,masked,65499
 ex_mem,mem_result,25,96,37103,masked,70601
 ex_mem,mem_wdata,3,44,31002,masked,59917
@@ -363,7 +363,7 @@ ex_mem,mem_wdata,23,95,6954,masked,63917
 ex_mem,mem_result,7,59,31838,tolerated,69425
 ex_mem,mem_reg_we,0,39,8447,masked,60605
 ex_mem,mem_result,18,22,29959,tolerated,70387
-ex_mem,mem_result,19,84,14308,tolerated,66649
+ex_mem,mem_result,19,84,14308,masked,66649
 ex_mem,mem_result,24,8,16312,masked,66675
 ex_mem,mem_wdata,15,92,35893,masked,64899
 ex_mem,mem_result,11,2,62562,tolerated,66407
@@ -373,7 +373,7 @@ ex_mem,mem_result,20,2,49051,tolerated,66491
 ex_mem,mem_rd,0,48,46662,masked,64487
 ex_mem,mem_wdata,30,27,14165,masked,59213
 ex_mem,mem_valid,0,23,55504,masked,63045
-ex_mem,mem_rd,3,63,29018,sdc,60423
+ex_mem,mem_rd,3,63,29018,sdc,60973
 ex_mem,mem_f3,2,86,18361,masked,68455
 ex_mem,mem_wdata,2,89,49036,masked,62749
 ex_mem,mem_result,25,35,49219,masked,65749
@@ -401,7 +401,7 @@ ex_mem,mem_result,0,75,2683,masked,69023
 ex_mem,mem_wdata,9,60,37863,masked,63019
 ex_mem,mem_wdata,17,31,6669,masked,69615
 ex_mem,mem_wdata,31,5,53798,masked,72931
-ex_mem,mem_result,19,87,59616,tolerated,63443
+ex_mem,mem_result,19,87,59616,masked,63443
 ex_mem,mem_result,24,5,19173,masked,72931
 ex_mem,mem_result,17,47,40235,tolerated,63383
 ex_mem,mem_wdata,22,90,20838,masked,65781
@@ -540,7 +540,7 @@ ex_mem,mem_result,28,45,8858,masked,49125
 ex_mem,mem_wdata,15,31,64515,masked,69615
 ex_mem,mem_wdata,17,19,33518,masked,72421
 ex_mem,mem_result,31,59,40930,masked,69137
-ex_mem,mem_result,23,58,67714,tolerated,69953
+ex_mem,mem_result,23,58,67714,masked,69953
 ex_mem,mem_wdata,5,75,40766,masked,69023
 ex_mem,mem_wdata,0,72,14255,masked,67715
 ex_mem,mem_wdata,28,79,50032,masked,60589
@@ -608,7 +608,7 @@ ex_mem,mem_result,20,20,39389,masked,64401
 ex_mem,mem_result,11,20,34644,masked,64401
 ex_mem,mem_wdata,20,60,4925,masked,63019
 ex_mem,mem_wdata,24,32,19756,masked,58149
-ex_mem,mem_result,15,54,25108,tolerated,62806
+ex_mem,mem_result,15,54,25108,masked,62851
 ex_mem,mem_wdata,10,97,63019,masked,66651
 ex_mem,mem_reg_we,0,5,12066,masked,72931
 ex_mem,mem_wdata,17,67,48909,masked,65215
@@ -673,7 +673,7 @@ ex_mem,mem_wdata,8,17,40503,masked,61739
 ex_mem,mem_result,24,57,10676,masked,61023
 ex_mem,mem_wdata,22,34,61913,masked,65499
 ex_mem,mem_rd,0,18,16679,masked,65267
-ex_mem,mem_result,22,38,43799,tolerated,66971
+ex_mem,mem_result,22,38,43799,masked,66971
 ex_mem,mem_wdata,17,52,7579,masked,67555
 ex_mem,mem_wdata,24,71,26525,masked,65265
 ex_mem,mem_store,0,92,434,masked,64899
@@ -692,7 +692,7 @@ ex_mem,mem_wdata,21,48,62930,masked,64487
 ex_mem,mem_result,26,68,5774,masked,66851
 ex_mem,mem_wdata,8,11,25780,masked,68247
 ex_mem,mem_wdata,28,78,9439,masked,63511
-ex_mem,mem_result,25,99,70852,tolerated,71637
+ex_mem,mem_result,25,99,70852,masked,71637
 ex_mem,mem_result,19,58,66546,tolerated,70089
 ex_mem,mem_wdata,5,34,5453,masked,65499
 ex_mem,mem_wdata,14,93,27420,masked,56335
@@ -706,7 +706,7 @@ ex_mem,mem_result,9,42,27611,masked,60683
 ex_mem,mem_rd,0,75,9003,tolerated,69067
 ex_mem,mem_result,1,21,51306,tolerated,63929
 ex_mem,mem_result,18,52,9130,masked,67555
-ex_mem,mem_result,31,62,56574,tolerated,64148
+ex_mem,mem_result,31,62,56574,masked,64203
 ex_mem,mem_result,23,93,52460,masked,56335
 ex_mem,mem_rd,2,40,3715,crash,62805
 ex_mem,mem_result,8,9,16680,masked,67775
@@ -793,7 +793,7 @@ ex_mem,mem_wdata,15,4,40306,masked,61577
 ex_mem,mem_wdata,10,61,3157,masked,65463
 ex_mem,mem_wdata,30,26,4250,masked,58949
 ex_mem,mem_wdata,29,86,44956,masked,68455
-ex_mem,mem_result,29,99,24761,tolerated,71637
+ex_mem,mem_result,29,99,24761,masked,71637
 ex_mem,mem_wdata,4,79,17392,masked,60589
 ex_mem,mem_wdata,19,37,26274,masked,62065
 ex_mem,mem_result,7,82,27230,masked,61233
@@ -921,7 +921,7 @@ ex_mem,mem_reg_we,0,87,26568,masked,63443
 ex_mem,mem_load,0,67,13944,tolerated,65297
 ex_mem,mem_result,24,51,44392,tolerated,63103
 ex_mem,mem_result,20,9,691,masked,67775
-ex_mem,mem_result,31,29,51913,tolerated,59275
+ex_mem,mem_result,31,29,51913,masked,59275
 ex_mem,mem_wdata,16,52,54537,masked,67555
 ex_mem,mem_result,11,40,64096,tolerated,69563
 ex_mem,mem_wdata,2,83,7779,masked,68755
@@ -931,7 +931,7 @@ ex_mem,mem_wdata,13,61,64225,masked,65463
 ex_mem,mem_result,17,76,45432,masked,64299
 ex_mem,mem_wdata,16,7,11766,masked,67351
 ex_mem,mem_wdata,0,76,14808,masked,64299
-ex_mem,mem_result,15,53,14814,tolerated,62455
+ex_mem,mem_result,15,53,14814,masked,62535
 ex_mem,mem_result,21,90,19800,masked,65781
 ex_mem,mem_result,9,34,62028,masked,65499
 ex_mem,mem_result,2,98,51625,masked,62763
@@ -943,7 +943,7 @@ ex_mem,mem_f3,0,1,3946,masked,65747
 ex_mem,mem_result,14,16,50169,tolerated,74999
 ex_mem,mem_result,3,50,21282,masked,67141
 ex_mem,mem_result,11,99,8019,tolerated,71637
-ex_mem,mem_result,14,89,32345,tolerated,62749
+ex_mem,mem_result,14,89,32345,masked,62749
 ex_mem,mem_wdata,15,7,38408,masked,67351
 ex_mem,mem_reg_we,0,41,33126,masked,62955
 ex_mem,mem_store,0,26,436,masked,58949
@@ -1078,7 +1078,7 @@ ex_mem,mem_wdata,25,37,1138,masked,62065
 ex_mem,mem_wdata,20,32,23546,masked,58149
 ex_mem,mem_wdata,8,89,1629,masked,62749
 ex_mem,mem_result,5,68,4668,masked,66851
-ex_mem,mem_result,24,43,48412,tolerated,63529
+ex_mem,mem_result,24,43,48412,masked,63609
 ex_mem,mem_result,23,82,4864,masked,61233
 ex_mem,mem_f3,0,99,24065,masked,71637
 ex_mem,mem_result,6,50,46683,tolerated,67141
@@ -1207,7 +1207,7 @@ ex_mem,mem_result,17,12,11642,masked,66727
 ex_mem,mem_result,26,19,64321,sdc,72423
 ex_mem,mem_reg_we,0,55,7044,masked,61896
 ex_mem,mem_wdata,0,52,46248,masked,67555
-ex_mem,mem_result,17,62,49181,tolerated,64203
+ex_mem,mem_result,17,62,49181,masked,64203
 ex_mem,mem_f3,2,60,42169,masked,63019
 ex_mem,mem_wdata,14,15,28047,masked,62535
 ex_mem,mem_result,27,19,57211,masked,72421
@@ -1283,7 +1283,7 @@ ex_mem,mem_wdata,9,5,49558,masked,72931
 ex_mem,mem_result,17,30,18351,tolerated,75059
 ex_mem,mem_valid,0,1,6035,masked,65747
 ex_mem,mem_result,17,48,2695,tolerated,64647
-ex_mem,mem_result,18,14,24603,tolerated,59026
+ex_mem,mem_result,18,14,24603,masked,59063
 ex_mem,mem_f3,1,65,50230,masked,64675
 ex_mem,mem_rd,0,37,14794,masked,62065
 ex_mem,mem_wdata,28,51,27544,masked,62943
@@ -1312,10 +1312,10 @@ ex_mem,mem_result,9,98,11255,masked,62763
 ex_mem,mem_wdata,18,88,1973,masked,61155
 ex_mem,mem_result,5,46,11067,masked,61197
 ex_mem,mem_wdata,4,60,37672,masked,63019
-ex_mem,mem_result,22,1,18525,tolerated,65667
+ex_mem,mem_result,22,1,18525,masked,65747
 ex_mem,mem_rd,2,31,61703,masked,69615
 ex_mem,mem_result,21,56,9867,tolerated,64825
-ex_mem,mem_result,31,56,15400,tolerated,64324
+ex_mem,mem_result,31,56,15400,masked,64591
 ex_mem,mem_result,17,40,63527,masked,69563
 ex_mem,mem_result,30,54,8114,masked,62851
 ex_mem,mem_rd,0,21,9127,tolerated,63929
@@ -1399,7 +1399,7 @@ ex_mem,mem_wdata,3,34,50912,masked,65499
 ex_mem,mem_result,4,66,26413,masked,67977
 ex_mem,mem_result,12,46,30788,masked,61197
 ex_mem,mem_result,10,94,8479,tolerated,72531
-ex_mem,mem_result,24,93,41713,tolerated,56335
+ex_mem,mem_result,24,93,41713,masked,56335
 ex_mem,mem_f3,2,15,28212,masked,62535
 ex_mem,mem_wdata,6,46,43461,masked,61197
 ex_mem,mem_result,15,51,12441,masked,62943
@@ -1471,7 +1471,7 @@ ex_mem,mem_wdata,6,93,33156,masked,56335
 ex_mem,mem_result,29,80,52931,masked,69915
 ex_mem,mem_rd,1,21,52412,tolerated,63929
 ex_mem,mem_wdata,27,9,39239,masked,67775
-ex_mem,mem_result,15,61,48358,masked,65434
+ex_mem,mem_result,15,61,48358,masked,65463
 ex_mem,mem_f3,0,8,1180,masked,66675
 ex_mem,mem_result,3,86,42799,masked,68455
 ex_mem,mem_wdata,1,8,48613,masked,66675
@@ -1513,10 +1513,10 @@ ex_mem,mem_store,0,77,18606,masked,60747
 ex_mem,mem_result,6,4,28041,masked,61577
 ex_mem,mem_result,9,7,1775,masked,67351
 ex_mem,mem_wdata,23,36,19820,masked,57739
-ex_mem,mem_result,23,72,50769,tolerated,67715
+ex_mem,mem_result,23,72,50769,masked,67715
 ex_mem,mem_wdata,17,31,10784,masked,69615
 ex_mem,mem_rd,2,81,44443,masked,64601
-ex_mem,mem_load,0,75,38590,tolerated,69023
+ex_mem,mem_load,0,75,38590,masked,69023
 ex_mem,mem_wdata,19,1,49920,masked,65747
 ex_mem,mem_wdata,9,57,18939,masked,61023
 ex_mem,mem_rd,0,64,25530,tolerated,74245
@@ -1658,7 +1658,7 @@ ex_mem,mem_wdata,15,50,16864,masked,67141
 ex_mem,mem_result,7,5,58537,masked,72931
 ex_mem,mem_wdata,10,67,47647,masked,65215
 ex_mem,mem_wdata,17,19,47442,masked,72421
-ex_mem,mem_result,15,34,33828,tolerated,65499
+ex_mem,mem_result,15,34,33828,masked,65499
 ex_mem,mem_result,10,12,64731,masked,66727
 ex_mem,mem_result,19,93,46090,sdc,56487
 ex_mem,mem_wdata,16,8,10020,masked,66675
@@ -1816,13 +1816,13 @@ ex_mem,mem_wdata,8,55,7667,masked,61889
 ex_mem,mem_wdata,18,81,6480,masked,64601
 ex_mem,mem_rd,0,53,58329,masked,62535
 ex_mem,mem_wdata,10,81,8876,masked,64601
-ex_mem,mem_result,27,9,14237,tolerated,67746
+ex_mem,mem_result,27,9,14237,masked,67775
 ex_mem,mem_wdata,9,86,11642,masked,68455
 ex_mem,mem_wdata,10,54,31024,masked,62851
 ex_mem,mem_wdata,26,74,58833,masked,68495
 ex_mem,mem_result,15,10,34003,masked,67005
 ex_mem,mem_wdata,31,36,25236,masked,57739
-ex_mem,mem_result,30,11,44220,tolerated,68060
+ex_mem,mem_result,30,11,44220,masked,68247
 ex_mem,mem_wdata,12,21,5855,masked,63929
 ex_mem,mem_result,5,73,39808,tolerated,68891
 ex_mem,mem_result,29,97,28584,tolerated,66733
@@ -1936,7 +1936,7 @@ ex_mem,mem_f3,0,66,1234,masked,67977
 ex_mem,mem_result,4,74,11600,masked,68495
 ex_mem,mem_wdata,2,77,3895,masked,60747
 ex_mem,mem_wdata,15,20,31562,masked,64401
-ex_mem,mem_result,15,47,22087,tolerated,63303
+ex_mem,mem_result,15,47,22087,masked,63303
 ex_mem,mem_wdata,16,81,44380,masked,64601
 ex_mem,mem_f3,0,43,44784,masked,63609
 ex_mem,mem_wdata,17,30,41457,masked,74847
@@ -1980,7 +1980,7 @@ ex_mem,mem_wdata,21,19,48974,masked,72421
 ex_mem,mem_wdata,26,19,8020,masked,72421
 ex_mem,mem_result,14,8,9300,masked,66675
 ex_mem,mem_wdata,20,88,19557,masked,61155
-ex_mem,mem_result,31,41,52844,sdc,62953
+ex_mem,mem_result,31,41,52844,masked,62955
 ex_mem,mem_result,14,46,46254,sdc,61293
 ex_mem,mem_result,1,79,4138,masked,60589
 ex_mem,mem_result,30,56,25188,masked,64831
@@ -2035,9 +2035,9 @@ ex_mem,mem_wdata,9,74,8870,masked,68495
 ex_mem,mem_wdata,3,17,28980,masked,61739
 ex_mem,mem_result,7,52,32127,masked,67555
 ex_mem,mem_result,20,83,21973,masked,68755
-ex_mem,mem_result,25,62,55476,tolerated,64203
+ex_mem,mem_result,25,62,55476,masked,64203
 ex_mem,mem_wdata,26,6,51220,masked,64255
-ex_mem,mem_result,24,82,46755,masked,61235
+ex_mem,mem_result,24,82,46755,masked,61233
 ex_mem,mem_result,27,29,39342,sdc,59909
 ex_mem,mem_result,2,79,16483,masked,60589
 ex_mem,mem_wdata,0,46,36344,masked,61197
@@ -2058,7 +2058,7 @@ ex_mem,mem_result,30,52,55648,masked,67555
 ex_mem,mem_wdata,25,84,22576,masked,66649
 ex_mem,mem_wdata,19,87,42777,masked,63443
 ex_mem,mem_wdata,8,57,45740,masked,61023
-ex_mem,mem_result,27,78,12168,masked,63498
+ex_mem,mem_result,27,78,12168,masked,63511
 ex_mem,mem_result,25,73,30500,masked,68867
 ex_mem,mem_wdata,18,18,51386,masked,65267
 ex_mem,mem_wdata,21,32,3741,masked,58149
@@ -2141,7 +2141,7 @@ ex_mem,mem_result,12,96,29312,masked,70601
 ex_mem,mem_result,0,59,51700,masked,69137
 ex_mem,mem_wdata,13,61,54200,masked,65463
 ex_mem,mem_wdata,7,82,38834,masked,61233
-ex_mem,mem_result,22,35,51524,tolerated,65749
+ex_mem,mem_result,22,35,51524,masked,65749
 ex_mem,mem_result,16,65,1447,masked,64675
 ex_mem,mem_wdata,28,28,19008,masked,65765
 ex_mem,mem_result,19,47,59853,sdc,63301
@@ -2209,7 +2209,7 @@ ex_mem,mem_wdata,24,76,54683,masked,64299
 ex_mem,mem_wdata,13,68,55669,masked,66851
 ex_mem,mem_wdata,2,7,20747,masked,67351
 ex_mem,mem_wdata,10,7,37759,masked,67351
-ex_mem,mem_result,21,42,2953,tolerated,60523
+ex_mem,mem_result,21,42,2953,masked,60683
 ex_mem,mem_result,28,32,57451,masked,58149
 ex_mem,mem_result,31,0,42725,masked,63897
 ex_mem,mem_wdata,8,1,53808,masked,65747
@@ -2436,7 +2436,7 @@ ex_mem,mem_wdata,25,10,16342,masked,67005
 ex_mem,mem_load,0,18,57442,masked,65267
 ex_mem,mem_wdata,29,81,14896,masked,64601
 ex_mem,mem_result,7,91,10764,masked,63315
-ex_mem,mem_result,31,37,635,tolerated,62065
+ex_mem,mem_result,31,37,635,masked,62065
 ex_mem,mem_rd,1,34,37505,masked,65499
 ex_mem,mem_wdata,0,15,54647,masked,62535
 ex_mem,mem_wdata,2,96,70176,masked,70601
@@ -2517,9 +2517,9 @@ ex_mem,mem_f3,2,48,57851,masked,64487
 ex_mem,mem_rd,1,63,48048,masked,64055
 ex_mem,mem_wdata,9,28,27746,masked,65765
 ex_mem,mem_result,30,17,47135,tolerated,61739
-ex_mem,mem_result,15,62,24999,tolerated,64121
+ex_mem,mem_result,15,62,24999,masked,64203
 ex_mem,mem_result,12,78,63161,tolerated,63511
-ex_mem,mem_result,19,58,59453,tolerated,69953
+ex_mem,mem_result,19,58,59453,masked,69953
 ex_mem,mem_result,27,90,12068,masked,65781
 ex_mem,mem_result,31,13,40523,sdc,73609
 ex_mem,mem_rd,2,88,2615,masked,61155
@@ -2556,11 +2556,11 @@ ex_mem,mem_result,18,38,54218,masked,66971
 ex_mem,mem_wdata,14,91,45190,masked,63315
 ex_mem,mem_f3,1,44,7577,masked,59917
 ex_mem,mem_result,29,53,12075,masked,62535
-ex_mem,mem_result,15,34,26388,tolerated,65499
+ex_mem,mem_result,15,34,26388,masked,65499
 ex_mem,mem_result,11,74,24131,masked,68495
 ex_mem,mem_result,19,37,46750,masked,62065
 ex_mem,mem_result,21,60,2658,masked,63019
-ex_mem,mem_result,15,98,11111,tolerated,62683
+ex_mem,mem_result,15,98,11111,masked,62763
 ex_mem,mem_result,15,38,65554,tolerated,67099
 ex_mem,mem_result,26,99,46992,tolerated,71797
 ex_mem,mem_wdata,8,87,13748,masked,63443
@@ -2592,7 +2592,7 @@ ex_mem,mem_result,21,7,23513,masked,67351
 ex_mem,mem_rd,3,79,25239,tolerated,60589
 ex_mem,mem_valid,0,67,31172,masked,65215
 ex_mem,mem_f3,0,49,48463,masked,61953
-ex_mem,mem_result,31,56,15162,tolerated,64324
+ex_mem,mem_result,31,56,15162,masked,64591
 ex_mem,mem_result,4,87,44915,masked,63443
 ex_mem,mem_result,9,95,18569,masked,63917
 ex_mem,mem_result,6,14,36444,tolerated,59063
@@ -2626,8 +2626,8 @@ ex_mem,mem_wdata,27,38,15678,masked,66971
 ex_mem,mem_wdata,20,74,8940,masked,68495
 ex_mem,mem_result,27,9,32427,tolerated,67465
 ex_mem,mem_result,28,55,862,masked,61889
-ex_mem,mem_result,17,70,17134,tolerated,61309
-ex_mem,mem_result,20,26,5157,masked,58928
+ex_mem,mem_result,17,70,17134,masked,61229
+ex_mem,mem_result,20,26,5157,masked,58949
 ex_mem,mem_wdata,28,65,51295,masked,64675
 ex_mem,mem_wdata,19,30,70069,masked,74847
 ex_mem,mem_mmio,0,78,12646,masked,63511
@@ -2796,7 +2796,7 @@ ex_mem,mem_result,5,71,39171,masked,65265
 ex_mem,mem_result,26,82,8980,sdc,61557
 ex_mem,mem_wdata,8,37,54159,masked,62065
 ex_mem,mem_result,17,46,57876,masked,61197
-ex_mem,mem_result,25,52,24010,tolerated,67315
+ex_mem,mem_result,25,52,24010,masked,67555
 ex_mem,mem_store,0,41,27400,masked,62955
 ex_mem,mem_valid,0,42,42965,masked,60683
 ex_mem,mem_result,22,42,46676,sdc,60687
@@ -2860,7 +2860,7 @@ ex_mem,mem_store,0,5,40888,masked,72931
 ex_mem,mem_result,2,49,27237,masked,61953
 ex_mem,mem_wdata,28,42,58903,masked,60683
 ex_mem,mem_result,5,72,15475,tolerated,67715
-ex_mem,mem_result,23,56,17192,masked,64570
+ex_mem,mem_result,23,56,17192,masked,64591
 ex_mem,mem_wdata,13,63,9051,masked,64055
 ex_mem,mem_result,12,96,14636,masked,70601
 ex_mem,mem_result,2,58,10994,masked,69953
@@ -2870,7 +2870,7 @@ ex_mem,mem_result,12,52,67092,masked,67555
 ex_mem,mem_result,19,50,30746,masked,67141
 ex_mem,mem_wdata,9,82,34144,masked,61233
 ex_mem,mem_rd,1,44,30059,tolerated,59924
-ex_mem,mem_result,29,39,60228,tolerated,60605
+ex_mem,mem_result,29,39,60228,masked,60605
 ex_mem,mem_result,6,80,55985,masked,69915
 ex_mem,mem_result,26,20,38477,tolerated,64565
 ex_mem,mem_result,11,9,18236,masked,67775
@@ -2882,7 +2882,7 @@ ex_mem,mem_result,12,98,14817,masked,62763
 ex_mem,mem_result,23,83,46676,tolerated,69389
 ex_mem,mem_rd,3,32,7885,masked,58149
 ex_mem,mem_wdata,6,98,62440,masked,62763
-ex_mem,mem_result,23,74,59215,tolerated,68495
+ex_mem,mem_result,23,74,59215,masked,68495
 ex_mem,mem_wdata,29,30,50722,masked,74847
 ex_mem,mem_rd,1,94,14041,masked,72451
 ex_mem,mem_rd,2,28,5414,masked,65765
@@ -2965,7 +2965,7 @@ ex_mem,mem_wdata,29,41,32787,masked,62955
 ex_mem,mem_mmio,0,88,14778,masked,61155
 ex_mem,mem_wdata,2,42,9345,masked,60683
 ex_mem,mem_reg_we,0,17,39774,masked,61739
-ex_mem,mem_result,27,97,24563,tolerated,66571
+ex_mem,mem_result,27,97,24563,masked,66651
 ex_mem,mem_result,9,9,66881,masked,67775
 ex_mem,mem_wdata,14,36,22775,masked,57739
 ex_mem,mem_wdata,5,3,26359,masked,69795

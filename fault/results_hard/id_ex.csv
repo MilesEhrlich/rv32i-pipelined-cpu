@@ -114,7 +114,7 @@ id_ex,ex_rs1_val,12,94,43693,tolerated,77633
 id_ex,ex_pc,16,50,42552,masked,72003
 id_ex,ex_rs2_val,5,49,35728,masked,66815
 id_ex,ex_pc,31,27,16939,masked,64075
-id_ex,ex_imm,21,89,61186,tolerated,67564
+id_ex,ex_imm,21,89,61186,masked,67611
 id_ex,ex_rs1_val,11,31,42566,tolerated,74549
 id_ex,ex_pc,6,34,46859,masked,70361
 id_ex,ex_imm,13,87,67788,masked,68305
@@ -184,7 +184,7 @@ id_ex,ex_jalr,0,30,67274,masked,146984
 id_ex,ex_rd,2,62,46900,masked,69065
 id_ex,ex_rs2_val,7,66,16263,masked,72839
 id_ex,ex_alu_op,3,88,42205,tolerated,66105
-id_ex,ex_imm,22,73,27025,tolerated,73692
+id_ex,ex_imm,22,73,27025,masked,73729
 id_ex,ex_rs1_val,0,51,64450,masked,67805
 id_ex,ex_pc,9,15,58380,masked,67397
 id_ex,ex_imm,4,90,53735,masked,70643
@@ -197,10 +197,10 @@ id_ex,ex_pc,1,53,32833,masked,67397
 id_ex,ex_rs2_val,23,7,2560,masked,72213
 id_ex,ex_rd,3,79,54343,tolerated,65451
 id_ex,ex_pc,31,47,14737,masked,68165
-id_ex,ex_rs1_val,12,20,59822,tolerated,69263
+id_ex,ex_rs1_val,12,20,59822,masked,69263
 id_ex,ex_pc,11,96,16236,masked,75463
 id_ex,ex_rs2_val,21,34,16600,masked,70361
-id_ex,ex_rs1_val,29,96,20664,tolerated,75463
+id_ex,ex_rs1_val,29,96,20664,masked,75463
 id_ex,ex_rs2_val,7,44,54454,masked,64779
 id_ex,ex_rs2_val,18,57,53941,tolerated,65885
 id_ex,ex_pc,19,2,34413,masked,71269
@@ -223,7 +223,7 @@ id_ex,ex_jalr,0,33,69069,crash,217101
 id_ex,ex_imm,14,8,2574,masked,71537
 id_ex,ex_rs1_val,14,45,2323,detected,4887
 id_ex,ex_pc,21,45,27580,masked,53987
-id_ex,ex_rs1_val,24,14,8989,tolerated,64155
+id_ex,ex_rs1_val,24,14,8989,masked,63925
 id_ex,ex_rs2_val,1,20,57686,masked,69263
 id_ex,ex_imm,26,61,31319,masked,70325
 id_ex,ex_rs1_val,19,3,67603,masked,74657
@@ -372,7 +372,7 @@ id_ex,ex_pc,25,77,61871,masked,65609
 id_ex,ex_rs1_val,24,2,4941,masked,71269
 id_ex,ex_imm,31,48,6479,crash,208047
 id_ex,ex_imm,21,27,28256,masked,64075
-id_ex,ex_imm,23,23,4896,sdc,58489
+id_ex,ex_imm,23,23,4896,masked,67907
 id_ex,ex_alu_op,1,63,2424,masked,68917
 id_ex,ex_imm,30,86,52170,masked,73317
 id_ex,ex_rs2_val,6,89,11835,masked,67619
@@ -471,7 +471,7 @@ id_ex,ex_imm,10,54,1902,masked,67713
 id_ex,ex_f3,1,50,65234,masked,72003
 id_ex,ex_b_imm,0,88,25571,masked,66017
 id_ex,ex_rs2_val,18,48,61268,masked,69349
-id_ex,ex_imm,14,43,29678,tolerated,68442
+id_ex,ex_imm,14,43,29678,masked,68471
 id_ex,ex_imm,6,16,58250,masked,79125
 id_ex,ex_rs1_val,0,64,58255,masked,79577
 id_ex,ex_rs1_val,5,99,31700,tolerated,76491
@@ -563,7 +563,7 @@ id_ex,ex_rs2_val,4,14,7360,masked,63925
 id_ex,ex_rs1_val,1,50,34472,masked,72003
 id_ex,ex_fw2,0,86,55333,masked,73317
 id_ex,ex_a_sel,0,7,22577,crash,216639
-id_ex,ex_rs1_val,21,30,77374,tolerated,79709
+id_ex,ex_rs1_val,21,30,77374,masked,79709
 id_ex,ex_imm,9,9,34174,crash,217911
 id_ex,ex_rs2_val,17,83,55819,masked,73617
 id_ex,ex_pc,5,18,39988,masked,70129
@@ -672,7 +672,7 @@ id_ex,ex_rs1_val,28,56,29001,masked,69453
 id_ex,ex_rs2_val,12,17,30799,masked,66601
 id_ex,ex_rs1_val,28,57,21466,masked,65885
 id_ex,ex_imm,13,34,15232,masked,70361
-id_ex,ex_imm,31,18,3409,detected,4887
+id_ex,ex_imm,31,18,3409,masked,70129
 id_ex,ex_pc,13,38,38387,masked,71833
 id_ex,ex_rs2_val,21,52,51769,masked,72417
 id_ex,ex_imm,15,71,18783,masked,70127
@@ -715,7 +715,7 @@ id_ex,ex_rs1_val,20,56,53535,masked,69453
 id_ex,ex_rs2_val,28,87,3726,masked,68305
 id_ex,ex_rs2_val,15,5,15447,masked,77793
 id_ex,ex_br,0,22,18675,masked,75421
-id_ex,ex_rs1_val,18,63,28571,tolerated,68917
+id_ex,ex_rs1_val,18,63,28571,masked,68917
 id_ex,ex_pc,30,37,56879,crash,56881
 id_ex,ex_rs1_val,24,72,55033,masked,72577
 id_ex,ex_a_sel,1,3,14462,tolerated,74657
@@ -730,7 +730,7 @@ id_ex,ex_fm1,0,25,16701,masked,66175
 id_ex,ex_pc,13,20,55044,masked,69263
 id_ex,ex_imm,6,94,14298,masked,77313
 id_ex,ex_rs2_val,10,8,26896,masked,71537
-id_ex,ex_rs1_val,12,85,60422,tolerated,72493
+id_ex,ex_rs1_val,12,85,60422,masked,72493
 id_ex,ex_jal,0,74,44659,masked,73312
 id_ex,ex_valid,0,16,25671,masked,79125
 id_ex,ex_rs1_val,6,69,20500,masked,68395
@@ -759,7 +759,7 @@ id_ex,ex_rs1_val,7,73,35531,masked,73729
 id_ex,ex_fm2,0,96,67865,masked,75463
 id_ex,ex_rs2_val,1,18,41933,masked,70129
 id_ex,ex_rs1_val,23,18,49845,tolerated,70459
-id_ex,ex_rs1_val,15,75,54791,tolerated,73848
+id_ex,ex_rs1_val,15,75,54791,masked,73885
 id_ex,ex_a_sel,0,99,9177,masked,76499
 id_ex,ex_rs2_val,13,92,10578,masked,69761
 id_ex,ex_imm,22,83,68357,masked,73617
@@ -826,7 +826,7 @@ id_ex,ex_pc,15,13,22998,crash,23000
 id_ex,ex_fm1,0,9,63624,tolerated,72637
 id_ex,ex_imm,23,41,936,masked,67817
 id_ex,ex_rd,2,4,8078,sdc,66746
-id_ex,ex_rs1_val,20,31,51209,tolerated,74327
+id_ex,ex_rs1_val,20,31,51209,masked,74477
 id_ex,ex_rs1_val,5,54,38138,masked,67713
 id_ex,ex_imm,6,3,64321,tolerated,74697
 id_ex,ex_fw1,0,24,48241,tolerated,77939
@@ -937,7 +937,7 @@ id_ex,ex_rs1_val,13,34,53912,masked,70361
 id_ex,ex_f3,1,98,12435,tolerated,67709
 id_ex,ex_br,0,29,61915,masked,64137
 id_ex,ex_imm,24,70,38819,masked,66091
-id_ex,ex_rs1_val,21,28,51838,tolerated,70627
+id_ex,ex_rs1_val,21,28,51838,masked,70627
 id_ex,ex_rs2_val,2,46,13324,masked,66059
 id_ex,ex_imm,28,1,59155,masked,70609
 id_ex,ex_rs1_val,18,16,46479,masked,79125
@@ -971,7 +971,7 @@ id_ex,ex_rs2_val,0,64,16141,tolerated,79569
 id_ex,ex_rd,4,99,53908,crash,229497
 id_ex,ex_imm,3,16,43896,masked,79104
 id_ex,ex_rs2_val,30,51,32297,masked,67805
-id_ex,ex_rs1_val,17,96,73495,tolerated,75463
+id_ex,ex_rs1_val,17,96,73495,masked,75463
 id_ex,ex_pc,8,57,42842,masked,65885
 id_ex,ex_imm,5,30,62552,masked,79709
 id_ex,ex_imm,0,66,43395,masked,72839
@@ -987,7 +987,7 @@ id_ex,ex_pc,2,0,15661,masked,68759
 id_ex,ex_rs2_val,26,10,43995,masked,71867
 id_ex,ex_pc,18,52,32788,masked,72417
 id_ex,ex_rs1_val,10,89,14188,masked,67611
-id_ex,ex_rs1_val,17,52,48598,tolerated,72417
+id_ex,ex_rs1_val,17,52,48598,masked,72417
 id_ex,ex_jal,0,13,58491,tolerated,79016
 id_ex,ex_pc,30,63,24258,masked,68917
 id_ex,ex_fw1,0,24,3760,masked,77775
@@ -1011,14 +1011,14 @@ id_ex,ex_imm,9,74,32801,masked,73357
 id_ex,ex_imm,24,27,58395,masked,64075
 id_ex,ex_pc,25,85,22464,masked,72493
 id_ex,ex_rs2_val,11,15,238,masked,67397
-id_ex,ex_imm,7,41,29421,masked,97320
+id_ex,ex_imm,7,41,29421,crash,203451
 id_ex,ex_rs1_val,6,1,51122,tolerated,70609
 id_ex,ex_rs2_val,21,65,24448,masked,69537
 id_ex,ex_rs1_val,16,13,35161,masked,79021
 id_ex,ex_imm,18,63,3742,masked,68917
 id_ex,ex_pc,6,29,40953,masked,64137
 id_ex,ex_imm,2,78,16089,tolerated,68925
-id_ex,ex_imm,18,6,12217,tolerated,69117
+id_ex,ex_imm,18,6,12217,masked,69117
 id_ex,ex_rs2_val,31,44,25045,masked,64779
 id_ex,ex_a_sel,0,41,40772,masked,67817
 id_ex,ex_rs2_val,15,3,63129,masked,74657
@@ -1140,7 +1140,7 @@ id_ex,ex_imm,23,86,28806,tolerated,73401
 id_ex,ex_pc,6,69,39073,tolerated,68398
 id_ex,ex_reg_we,0,83,9517,masked,73617
 id_ex,ex_imm,11,7,3389,crash,216639
-id_ex,ex_imm,30,62,61987,tolerated,69026
+id_ex,ex_imm,30,62,61987,masked,69065
 id_ex,ex_imm,1,64,55474,tolerated,79737
 id_ex,ex_rs2_val,24,50,37109,masked,72003
 id_ex,ex_b_imm,0,7,15573,masked,72213
@@ -1379,7 +1379,7 @@ id_ex,ex_pc,14,65,23154,crash,23156
 id_ex,ex_rs2_val,12,12,42452,masked,71589
 id_ex,ex_rs2_val,17,28,17577,masked,70627
 id_ex,ex_imm,20,12,50456,crash,50458
-id_ex,ex_rs1_val,19,10,32275,tolerated,71867
+id_ex,ex_rs1_val,19,10,32275,masked,71867
 id_ex,ex_rs2_val,17,89,60902,masked,67611
 id_ex,ex_imm,13,27,17337,masked,64075
 id_ex,ex_rd,2,73,2522,crash,221187
@@ -1424,7 +1424,7 @@ id_ex,ex_rs2_val,9,82,5931,masked,66095
 id_ex,ex_imm,13,1,17300,masked,70609
 id_ex,ex_rs1_val,26,71,14494,masked,70127
 id_ex,ex_rs2_val,6,31,61612,masked,74477
-id_ex,ex_imm,7,2,30331,masked,101682
+id_ex,ex_imm,7,2,30331,crash,213807
 id_ex,ex_imm,13,90,44047,masked,70643
 id_ex,ex_rs1_val,11,21,13370,tolerated,68903
 id_ex,ex_rs1_val,28,11,36405,masked,73109
@@ -1465,7 +1465,7 @@ id_ex,ex_pc,14,75,72608,crash,72610
 id_ex,ex_rs1_val,12,45,44605,masked,53987
 id_ex,ex_rs2_val,20,61,27148,masked,70325
 id_ex,ex_rs1_val,1,98,49090,masked,67625
-id_ex,ex_rs1_val,25,83,41538,tolerated,73617
+id_ex,ex_rs1_val,25,83,41538,masked,73617
 id_ex,ex_rs2_val,28,75,22963,masked,73885
 id_ex,ex_rs2_val,10,93,39791,tolerated,61277
 id_ex,ex_pc,20,80,55594,masked,74777
@@ -1554,7 +1554,7 @@ id_ex,ex_rs1_val,25,98,57309,tolerated,67809
 id_ex,ex_alu_op,3,53,35885,masked,67397
 id_ex,ex_pc,14,37,39870,masked,66927
 id_ex,ex_imm,23,34,33995,masked,70361
-id_ex,ex_imm,20,74,30324,tolerated,73357
+id_ex,ex_imm,20,74,30324,masked,73357
 id_ex,ex_reg_we,0,64,67815,masked,79577
 id_ex,ex_pc,2,77,18812,masked,65609
 id_ex,ex_imm,0,22,67069,masked,75421
@@ -1601,7 +1601,7 @@ id_ex,ex_imm,30,87,3064,masked,68305
 id_ex,ex_rd,2,87,20895,masked,68305
 id_ex,ex_br,0,86,37118,masked,73319
 id_ex,ex_rs2_val,31,35,40962,masked,70611
-id_ex,ex_rs1_val,24,23,15947,tolerated,67782
+id_ex,ex_rs1_val,24,23,15947,masked,67907
 id_ex,ex_imm,9,82,12933,masked,66095
 id_ex,ex_rs2_val,28,19,28787,masked,77283
 id_ex,ex_pc,24,77,31435,masked,65609
@@ -1697,7 +1697,7 @@ id_ex,ex_rs1_val,27,25,5533,masked,66175
 id_ex,ex_rs1_val,6,35,25532,masked,70611
 id_ex,ex_rs2_val,7,54,25083,masked,67713
 id_ex,ex_pc,10,87,20202,masked,68305
-id_ex,ex_rs1_val,20,38,43369,tolerated,71820
+id_ex,ex_rs1_val,20,38,43369,masked,71833
 id_ex,ex_rs2_val,23,8,66636,masked,71537
 id_ex,ex_load,0,55,43732,masked,66751
 id_ex,ex_rs1_val,16,25,62674,masked,66175
@@ -1707,7 +1707,7 @@ id_ex,ex_rs1_val,26,65,50417,masked,69537
 id_ex,ex_rs2_val,6,46,27049,masked,66067
 id_ex,ex_rs1_val,7,71,5399,masked,70127
 id_ex,ex_imm,6,60,22377,masked,67881
-id_ex,ex_imm,27,61,15184,tolerated,70325
+id_ex,ex_imm,27,61,15184,masked,70325
 id_ex,ex_rd,2,66,59362,masked,72839
 id_ex,ex_imm,6,49,10318,masked,66815
 id_ex,ex_imm,13,26,34207,masked,63811
@@ -1764,7 +1764,7 @@ id_ex,ex_pc,20,96,47143,crash,47145
 id_ex,ex_imm,0,34,69859,masked,70361
 id_ex,ex_rs1_val,27,21,24506,masked,68791
 id_ex,ex_pc,14,15,33409,masked,67397
-id_ex,ex_rs1_val,15,25,43207,tolerated,66138
+id_ex,ex_rs1_val,15,25,43207,masked,66175
 id_ex,ex_f3,2,31,45355,masked,74477
 id_ex,ex_alu_op,1,36,30267,masked,62601
 id_ex,ex_imm,22,24,6242,crash,6244
@@ -2034,7 +2034,7 @@ id_ex,ex_imm,11,45,12174,masked,53987
 id_ex,ex_imm,0,74,4930,masked,73357
 id_ex,ex_pc,26,17,34459,masked,66601
 id_ex,ex_rd,3,52,18284,tolerated,71947
-id_ex,ex_rs1_val,24,83,46763,tolerated,73537
+id_ex,ex_rs1_val,24,83,46763,masked,73617
 id_ex,ex_pc,16,62,32600,masked,69065
 id_ex,ex_imm,17,6,63395,masked,69117
 id_ex,ex_rs1_val,28,82,57737,masked,66287
@@ -2075,7 +2075,7 @@ id_ex,ex_rs2_val,5,76,58071,tolerated,69161
 id_ex,ex_imm,23,81,54357,masked,69463
 id_ex,ex_fw2,0,46,48383,masked,66059
 id_ex,ex_rs1_val,19,78,50433,masked,68373
-id_ex,ex_imm,30,85,66691,tolerated,72446
+id_ex,ex_imm,30,85,66691,masked,72493
 id_ex,ex_rs1_val,3,76,46672,masked,69161
 id_ex,ex_rs1_val,21,98,15294,masked,67625
 id_ex,ex_alu_op,3,31,33494,tolerated,74477
@@ -2227,7 +2227,7 @@ id_ex,ex_rs1_val,18,13,38468,masked,79021
 id_ex,ex_rd,0,57,11194,tolerated,65893
 id_ex,ex_pc,21,70,39192,masked,66091
 id_ex,ex_rs2_val,17,92,8755,masked,69761
-id_ex,ex_rs1_val,20,58,56049,tolerated,74345
+id_ex,ex_rs1_val,20,58,56049,masked,74815
 id_ex,ex_imm,6,64,48124,masked,81154
 id_ex,ex_rs2_val,1,88,1958,masked,66017
 id_ex,ex_rs2_val,31,66,10094,tolerated,72609
@@ -2275,7 +2275,7 @@ id_ex,ex_rs2_val,3,45,19012,masked,53987
 id_ex,ex_rs2_val,16,90,30005,masked,70643
 id_ex,ex_pc,11,56,9587,masked,69453
 id_ex,ex_pc,2,33,16688,masked,72367
-id_ex,ex_imm,7,33,48683,masked,121123
+id_ex,ex_imm,7,33,48683,crash,217101
 id_ex,ex_rd,4,35,28066,crash,211833
 id_ex,ex_rs1_val,7,94,68895,tolerated,77345
 id_ex,ex_imm,9,61,53385,masked,70325
@@ -2284,7 +2284,7 @@ id_ex,ex_rs2_val,3,15,62827,masked,67397
 id_ex,ex_rs1_val,0,84,28762,masked,71511
 id_ex,ex_jal,0,60,45875,sdc,68331
 id_ex,ex_pc,17,58,27876,masked,74815
-id_ex,ex_rs1_val,29,39,37917,masked,65446
+id_ex,ex_rs1_val,29,39,37917,masked,65467
 id_ex,ex_rs2_val,15,3,35259,tolerated,74899
 id_ex,ex_rs1_val,6,43,2852,masked,68471
 id_ex,ex_rs2_val,21,30,22247,masked,79709
@@ -2424,7 +2424,7 @@ id_ex,ex_rs2_val,5,18,32083,masked,70129
 id_ex,ex_rs1_val,3,94,60491,masked,77313
 id_ex,ex_imm,26,68,56364,crash,56366
 id_ex,ex_imm,4,12,66343,crash,214767
-id_ex,ex_imm,23,20,51739,tolerated,69226
+id_ex,ex_imm,23,20,51739,masked,69263
 id_ex,ex_imm,15,12,60069,crash,60071
 id_ex,ex_alu_op,3,84,61209,tolerated,71511
 id_ex,ex_imm,16,93,7734,masked,61197
@@ -2494,7 +2494,7 @@ id_ex,ex_rs2_val,23,13,13670,masked,79021
 id_ex,ex_rs2_val,27,33,32215,masked,72367
 id_ex,ex_rs2_val,20,68,57531,masked,71713
 id_ex,ex_rs1_val,4,49,53602,tolerated,66815
-id_ex,ex_imm,24,62,13289,tolerated,69065
+id_ex,ex_imm,24,62,13289,masked,69065
 id_ex,ex_rs1_val,26,11,11992,masked,73109
 id_ex,ex_imm,10,57,19181,tolerated,65415
 id_ex,ex_rd,0,87,2877,detected,4895
@@ -2599,10 +2599,10 @@ id_ex,ex_rd,2,14,35931,masked,63925
 id_ex,ex_jalr,0,71,61136,masked,131352
 id_ex,ex_rs2_val,20,12,65433,masked,71589
 id_ex,ex_fm2,0,55,48943,masked,66751
-id_ex,ex_imm,9,23,61840,tolerated,67860
+id_ex,ex_imm,9,23,61840,tolerated,67931
 id_ex,ex_rs1_val,0,8,43911,masked,71493
 id_ex,ex_fw2,0,44,38493,masked,64779
-id_ex,ex_pc,10,2,13931,masked,107696
+id_ex,ex_pc,10,2,13931,crash,213807
 id_ex,ex_rs1_val,7,24,57090,masked,77775
 id_ex,ex_fm2,0,36,38933,masked,62601
 id_ex,ex_rs1_val,24,73,20813,masked,73729
@@ -2686,7 +2686,7 @@ id_ex,ex_rs2_val,7,79,42370,masked,65451
 id_ex,ex_pc,13,56,37905,masked,69453
 id_ex,ex_rs2_val,0,96,62349,masked,75463
 id_ex,ex_rs1_val,20,26,39160,masked,63811
-id_ex,ex_rs1_val,20,47,27697,tolerated,68083
+id_ex,ex_rs1_val,20,47,27697,masked,68165
 id_ex,ex_rs2_val,17,41,7020,masked,67830
 id_ex,ex_rs1_val,19,99,53507,masked,76499
 id_ex,ex_imm,12,79,14088,tolerated,65627
@@ -2698,7 +2698,7 @@ id_ex,ex_rs1_val,16,53,18181,tolerated,67557
 id_ex,ex_rs1_val,17,97,27216,tolerated,72019
 id_ex,ex_pc,29,2,18200,masked,71269
 id_ex,ex_imm,0,65,12710,masked,69537
-id_ex,ex_rs1_val,22,13,57520,tolerated,79021
+id_ex,ex_rs1_val,22,13,57520,masked,79021
 id_ex,ex_rs2_val,18,17,17195,masked,66601
 id_ex,ex_rs1_val,16,90,21179,masked,70643
 id_ex,ex_rs1_val,26,77,42754,masked,65609
@@ -2827,7 +2827,7 @@ id_ex,ex_rs2_val,6,26,9558,masked,63811
 id_ex,ex_pc,4,49,57326,masked,66815
 id_ex,ex_imm,21,28,1279,crash,1281
 id_ex,ex_rs1_val,11,70,49557,crash,198273
-id_ex,ex_store,0,37,11489,tolerated,66927
+id_ex,ex_store,0,37,11489,detected,86635
 id_ex,ex_pc,29,97,27847,masked,71513
 id_ex,ex_rs2_val,2,51,66722,masked,67805
 id_ex,ex_pc,11,64,45581,masked,79577

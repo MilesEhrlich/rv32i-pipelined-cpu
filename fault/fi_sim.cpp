@@ -25,6 +25,9 @@
 //   golden=1                 run every image once without faults
 //   parity=1                 the core was built with PARITY=1: the regfile
 //                            target also includes the 31 parity bits
+//   replay=file.csv          instead of random trials, run the listed ones
+//                            (lines: site,bit,image,when; e.g. from the board,
+//                            fault/board_fi.py) and print the same fields
 // Output: one CSV line per trial on stdout.
 #include "Vcpu_core.h"
 #include "Vcpu_core___024root.h"
@@ -55,18 +58,25 @@ struct Sim {
 
     explicit Sim(const std::vector<uint32_t>& img, uint32_t te) : image(img), text_end(te) {
         top = new Vcpu_core;
+        imem.assign(MEM_WORDS, 0); dmem.assign(MEM_WORDS, 0);
     }
     ~Sim() { delete top; }
 
     void reset(uint32_t img_sel) {
-        imem = image; imem.resize(MEM_WORDS, 0);
-        dmem = image; dmem.resize(MEM_WORDS, 0);
-        image_sel = img_sel; result = 0xFFFFFFFF; check = 0; exit_code = 0;
-        exited = false; wild = false; got_result = false; got_check = false; detected = false; cycle = 0;
-        auto* r = top->rootp;
-        for (int i = 0; i < 32; i++) { r->cpu_core__DOT__u_rf__DOT__regs[i] = 0; r->cpu_core__DOT__u_rf__DOT__par[i] = 0; }
+        // Clock the reset first, then load memory and clear the registers:
+        // the previous trial may have stopped (crash) with a store or a
+        // register write still in the pipeline, and those land on the first
+        // reset edge. (Loading first let them corrupt the next trial; the
+        // board found it: fi_top.v restores memory long after reset.)
         top->rst = 1; top->imem_rdata = 0; top->dmem_rdata = 0; top->mmio_rdata = 0;
         for (int i = 0; i < 3; i++) step(true);
+        imem = image; imem.resize(MEM_WORDS, 0);
+        dmem = image; dmem.resize(MEM_WORDS, 0);
+        auto* r = top->rootp;
+        for (int i = 0; i < 32; i++) { r->cpu_core__DOT__u_rf__DOT__regs[i] = 0; r->cpu_core__DOT__u_rf__DOT__par[i] = 0; }
+        top->imem_rdata = imem[0]; top->dmem_rdata = 0; top->eval();
+        image_sel = img_sel; result = 0xFFFFFFFF; check = 0; exit_code = 0;
+        exited = false; wild = false; got_result = false; got_check = false; detected = false;
         top->rst = 0;
         cycle = 0;
     }
@@ -96,10 +106,14 @@ struct Sim {
             }
         }
         top->clk = 1; top->eval();               // registers sample old memory outputs
-        uint32_t iw = ia >> 2, dw = da >> 2;
-        uint32_t inew = iw < MEM_WORDS ? imem[iw] : 0;
-        uint32_t dnew = dw < MEM_WORDS ? dmem[dw] : 0;
-        if (we && dw < MEM_WORDS) {
+        // Like the block RAMs (imem.v, bram_be.v), only the low address bits
+        // are decoded: addresses past 16 KB alias. (Returning 0 there instead
+        // made flipped high pointer bits look harmful; the board showed they
+        // are not.)
+        uint32_t iw = (ia >> 2) & (MEM_WORDS - 1), dw = (da >> 2) & (MEM_WORDS - 1);
+        uint32_t inew = imem[iw];
+        uint32_t dnew = dmem[dw];
+        if (we) {
             uint32_t m = 0;
             for (int k = 0; k < 4; k++) if (be >> k & 1) m |= 0xFFu << (8 * k);
             dmem[dw] = (dmem[dw] & ~m) | (wd & m);
@@ -213,6 +227,32 @@ int main(int argc, char** argv) {
     if (get("golden", "0") == "1") {
         printf("image,class,checksum,cycles\n");
         for (int n = 0; n < N_TEST; n++) printf("%d,%u,%08x,%u\n", n, gold[n].cls, gold[n].sum, gold[n].cycles);
+        return 0;
+    }
+
+    auto classify = [&](int n) -> const char* {
+        if (sim.detected) return "detected";
+        if (sim.wild || !sim.exited || sim.exit_code || !sim.got_result || !sim.got_check) return "crash";
+        if (sim.result != gold[n].cls) return "sdc";
+        if (sim.check != gold[n].sum)  return "tolerated";
+        return "masked";
+    };
+
+    if (a.count("replay")) {
+        std::ifstream f(a["replay"]); std::string line;
+        printf("site,bit,image,when,outcome,cycles_run,result,check,golden_cycles\n");
+        while (std::getline(f, line)) {
+            char site[32]; int bit, n; unsigned long long when;
+            if (sscanf(line.c_str(), "%31[^,],%d,%d,%llu", site, &bit, &n, &when) != 4) continue;
+            sim.reset(n);
+            if (when < 0xFFFFFFFFull) {                 // board trials that never fired: no flip
+                sim.run((uint32_t)when);
+                if (!sim.exited && !sim.wild) flip_named(sim, {site, bit});
+            }
+            sim.run(3 * gold[n].cycles);
+            printf("%s,%d,%d,%llu,%s,%u,%u,%08x,%u\n", site, bit, n, when, classify(n), sim.cycle,
+                   sim.result, sim.check, gold[n].cycles);
+        }
         return 0;
     }
 
