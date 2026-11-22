@@ -12,7 +12,7 @@ DEFS=""; FREQ=40.5
 [ "$CORE" = single ] && { DEFS="-DSINGLE_CYCLE"; FREQ=27; SEED=${SEED:-5}; }  # single-cycle is at the edge of 27 MHz; seed 5 passes
 cd "$(dirname "$0")"
 mkdir -p reports build
-RTL="rtl/top.v rtl/uart_tx.v rtl/cpu.v rtl/cpu_pipe.v rtl/regfile.v rtl/imm_gen.v rtl/alu.v rtl/dmem.v rtl/imem.v"
+RTL="rtl/top.v rtl/uart_tx.v rtl/cpu.v rtl/cpu_pipe.v rtl/cpu_core.v rtl/bram_be.v rtl/regfile.v rtl/imm_gen.v rtl/alu.v rtl/dmem.v rtl/imem.v"
 
 make -s -C sw PROG="$PROG"
 yosys -p "read_verilog -DSYNTHESIS $DEFS $RTL; chparam -set PROGRAM \"sw/build/$PROG.hex\" top; synth_gowin -top top -json build/soc.json" \

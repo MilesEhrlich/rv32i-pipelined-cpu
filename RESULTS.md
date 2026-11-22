@@ -61,3 +61,14 @@ compare/add → next pipeline register.
 - Mutation checks: disabling any forwarding path, the load-use stall, the
   WB→ID bypass or branch squashing each makes the suite fail (6–40 tests).
 - Full-system simulation with a UART decoder (`top_tb.v`) before every board run.
+
+## ASIC (SkyWater 130 nm, LibreLane)
+
+The pipeline core (`cpu_core.v`, memories external) hardened to a signed-off
+layout. Details and the full clock sweep are in [asic/README.md](asic/README.md).
+
+| | FPGA (GW1NR-9) | ASIC (sky130, typical corner) |
+|---|---|---|
+| Clock | 40.5 MHz (Fmax ~45 MHz) | 90.9 MHz (slow corner ~61 MHz) |
+| Size | 2 859 LUT4 + 613 FFs (system) | 0.19 mm² die, 11 685 cells (core) |
+| Power | — | 12.7 mW at 90.9 MHz (estimated) |

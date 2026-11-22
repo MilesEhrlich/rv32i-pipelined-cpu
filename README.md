@@ -2,8 +2,10 @@
 
 A RISC-V CPU written from scratch in Verilog: first a single-cycle core, then a
 5-stage pipelined core. Both run C programs compiled with clang on a
-Tang Nano 9K (Gowin GW1NR-9) and print over UART. Everything is built with the
-open-source toolchain (yosys, nextpnr, Icarus Verilog).
+Tang Nano 9K (Gowin GW1NR-9) and print over UART. The pipelined core is also
+taken through a full ASIC flow to a signed-off layout on SkyWater 130 nm.
+Everything is built with open-source tools (yosys, nextpnr, Icarus Verilog,
+LibreLane/OpenROAD).
 
 ```
 Hello from my RISC-V CPU on the Tang Nano 9K!
@@ -26,6 +28,8 @@ muldiv    ok  cycles 194254  instr 180327  CPI 1.077  time 4796 us
   runtime with software multiply/divide (RV32I has no `mul`).
 - **Measured on hardware**: cycle and instructions-retired counters are readable
   from software. Cycle counts on the board match simulation exactly.
+- **ASIC layout on SkyWater 130 nm**: the core signs off at **90.9 MHz**
+  (typical corner) in 0.19 mm², with clean DRC and LVS. See [asic/](asic/).
 
 ## Results
 
@@ -41,6 +45,25 @@ muldiv    ok  cycles 194254  instr 180327  CPI 1.077  time 4796 us
 
 Full breakdown, including CPI per benchmark and how the pipeline's clock went
 from 27.6 MHz to 44 MHz: **[RESULTS.md](RESULTS.md)**.
+
+## ASIC: SkyWater 130 nm
+
+<img src="asic/layout.png" alt="cpu_core layout on sky130" width="420" align="right">
+
+The pipeline core (`rtl/cpu_core.v`, with memory as external ports) taken
+from RTL to GDS with LibreLane:
+
+| | |
+|---|---|
+| Die | 432 × 443 µm (0.19 mm²) |
+| Cells | 11 685 (1 332 flip-flops) |
+| Clock, typical corner | **90.9 MHz** |
+| Clock, slow corner | ~61 MHz |
+| Power at 90.9 MHz | 12.7 mW |
+| DRC / LVS | 0 errors / clean |
+
+Clock sweep, caveats and how to reproduce: **[asic/README.md](asic/README.md)**.
+<br clear="right">
 
 ## Pipeline
 
@@ -88,15 +111,17 @@ reads are clocked.
 
 ```
 rtl/          CPU and system Verilog
-  cpu_pipe.v    5-stage pipelined core
+  cpu_core.v    5-stage pipelined core (memory as external ports)
+  cpu_pipe.v    cpu_core + FPGA block-RAM memories
   cpu.v         single-cycle core
-  alu.v regfile.v imm_gen.v imem.v dmem.v
+  alu.v regfile.v imm_gen.v imem.v dmem.v bram_be.v
   uart_tx.v     115200 baud transmitter
   top.v         board top level: PLL, reset, I/O devices
 tb/           testbenches (unit, C-program, full-system with UART decoder)
 sw/           C toolchain setup and programs (crt0, linker script, runtime, board.c)
 tests/        riscv-tests runner and bare-metal test environment
 constraints/  pin assignments for the Tang Nano 9K
+asic/         LibreLane config, run script, results and layout for sky130
 learning/     earlier exercises: LED blink, logic gates, counter, ripple-carry adder
 ```
 
@@ -107,7 +132,7 @@ learning/     earlier exercises: LED blink, logic gates, counter, ripple-carry a
 LLVM with lld for RISC-V (`brew install llvm lld` on macOS).
 
 ```bash
-git clone --recursive <this repo>        # --recursive fetches riscv-tests
+git clone --recursive https://github.com/MilesEhrlich/rv32i-pipelined-cpu.git
 source <oss-cad-suite>/environment
 ```
 
@@ -153,6 +178,8 @@ Bugs that passed simulation but failed on the FPGA:
 
 ## Next steps
 
+- Fault-injection study: flip bits in registers and memory while a small
+  neural network runs on the CPU, and measure which flips change its output
+- Close timing at the slow ASIC corner; add SRAM macros for a full chip
 - Branch prediction (resolve `jal` in ID, a small BTB) to cut the taken-branch penalty
 - Instruction and data caches, with memory in the board's PSRAM
-- An ASIC flow for the core with OpenLane / SkyWater 130 nm

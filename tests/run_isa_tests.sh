@@ -32,7 +32,7 @@ for t in $TESTS; do
     $LLVM/llvm-objdump -d $OUT/$t.elf > $OUT/$t.dis
     rm -f $OUT/sim
     if ! iverilog -g2012 -o $OUT/sim -P c_tb.PROGRAM=\"$OUT/$t.hex\" -P c_tb.MAX_CYCLES=100000 \
-            $DEFS tb/c_tb.v rtl/cpu.v rtl/cpu_pipe.v rtl/regfile.v rtl/imm_gen.v rtl/alu.v rtl/dmem.v rtl/imem.v; then
+            $DEFS tb/c_tb.v rtl/cpu.v rtl/cpu_pipe.v rtl/cpu_core.v rtl/bram_be.v rtl/regfile.v rtl/imm_gen.v rtl/alu.v rtl/dmem.v rtl/imem.v; then
         printf "%-8s FAIL  (Verilog compile error)\n" "$t"
         fail=$((fail+1)); failed="$failed $t"; continue
     fi

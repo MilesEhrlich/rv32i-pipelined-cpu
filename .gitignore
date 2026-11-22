@@ -5,3 +5,8 @@ build/
 sw/build/
 tests/build/
 reports/
+asic/runs/
+asic/*.log
+asic/results/*/flow.log
+!asic/config.json
+!asic/results/*/metrics.json

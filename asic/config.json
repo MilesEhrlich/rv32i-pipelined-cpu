@@ -1,0 +1,15 @@
+{
+    "DESIGN_NAME": "cpu_core",
+    "VERILOG_FILES": [
+        "dir::../rtl/cpu_core.v",
+        "dir::../rtl/alu.v",
+        "dir::../rtl/regfile.v",
+        "dir::../rtl/imm_gen.v"
+    ],
+    "CLOCK_PORT": "clk",
+    "CLOCK_PERIOD": 11,
+    "FP_CORE_UTIL": 45,
+    "PL_TARGET_DENSITY_PCT": 55,
+    "RUN_POST_GRT_DESIGN_REPAIR": true,
+    "RUN_POST_GRT_RESIZER_TIMING": true
+}

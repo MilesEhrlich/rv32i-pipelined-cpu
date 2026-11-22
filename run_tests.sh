@@ -3,7 +3,7 @@
 #   ./run_tests.sh
 cd "$(dirname "$0")"
 mkdir -p build
-CORE_RTL="rtl/cpu.v rtl/cpu_pipe.v rtl/regfile.v rtl/imm_gen.v rtl/alu.v rtl/dmem.v rtl/imem.v"
+CORE_RTL="rtl/cpu.v rtl/cpu_pipe.v rtl/cpu_core.v rtl/bram_be.v rtl/regfile.v rtl/imm_gen.v rtl/alu.v rtl/dmem.v rtl/imem.v"
 fails=0
 
 check() {  # check "name" "expected text" command...

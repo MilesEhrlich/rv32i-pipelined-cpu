@@ -10,5 +10,5 @@ cd "$(dirname "$0")"
 mkdir -p build
 make -s -C sw PROG="$PROG"
 iverilog -g2012 -o build/sim_c -P c_tb.PROGRAM=\"sw/build/$PROG.hex\" \
-    $DEFS tb/c_tb.v rtl/cpu.v rtl/cpu_pipe.v rtl/regfile.v rtl/imm_gen.v rtl/alu.v rtl/dmem.v rtl/imem.v
+    $DEFS tb/c_tb.v rtl/cpu.v rtl/cpu_pipe.v rtl/cpu_core.v rtl/bram_be.v rtl/regfile.v rtl/imm_gen.v rtl/alu.v rtl/dmem.v rtl/imem.v
 vvp -n build/sim_c | grep -v readmemh
