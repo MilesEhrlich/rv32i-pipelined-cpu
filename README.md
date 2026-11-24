@@ -37,8 +37,8 @@ muldiv    ok  cycles 194254  instr 180327  CPI 1.077  time 4796 us
   CPU and model turn a flip into a silent wrong answer, then hardening
   (register parity, int16 biases, a model checksum) that cuts silent wrong
   answers from 4.0% to 1.8% of flips. Confirmed on the FPGA: 20 000 bit
-  flips injected on the board agree with simulation trial for trial, and
-  found two bugs in my simulator. See [fault/](fault/).
+  flips injected on the board agree with simulation trial for trial.
+  Getting there exposed two bugs in my simulator. See [fault/](fault/).
 
 ## Results
 
